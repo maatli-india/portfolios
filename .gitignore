@@ -1,28 +1,139 @@
-# Angular specific
-/dist/
-/out-tsc/
-/tmp/
-/coverage/
-/e2e/test-output/
-/.angular/
-.angular/
+############################
+# GENERAL
+############################
+*.log
+*.tmp
+*.temp
+*.swp
+*.swo
+*.bak
+*.out
+*.err
+.DS_Store
+Thumbs.db
 
-# Node modules and dependency files
-/node_modules/
-/package-lock.json
-/yarn.lock
+############################
+# OS FILES
+############################
 
-# Environment files
-/.env
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
 
-# Angular CLI and build artefacts
-/.angular-cli.json
-/.ng/
+# Windows
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/
 
-# TypeScript cache
-*.tsbuildinfo
+# Linux
+*~
 
-# Logs
+############################
+# ENV / SECRETS
+############################
+.env
+.env.*
+*.env
+
+############################
+# GO
+############################
+bin/
+pkg/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+vendor/
+
+############################
+# PYTHON
+############################
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+*.log
+pip-wheel-metadata/
+
+# virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+############################
+# NODE / JAVASCRIPT
+############################
+node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+pnpm-debug.log*
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+############################
+# REACT / VUE / ANGULAR
+############################
+build/
+dist/
+.cache/
+.next/
+.nuxt/
+.angular/
+coverage/
+*.tsbuildinfo
+
+############################
+# HTML / CSS
+############################
+*.css.map
+*.sass-cache/
+
+############################
+# DOCKER
+############################
+.dockerignore
+docker-compose.override.yml
+
+############################
+# KUBERNETES
+############################
+*.kubeconfig
+kubeconfig*
+*.secret.yaml
+secrets.yaml
+
+############################
+# EDITORS / IDEs
+############################
+.vscode/
+.idea/
+*.iml
+
+############################
+# TEST / COVERAGE
+############################
+coverage/
+*.cover
+.coverage
+htmlcov/
+
+############################
+# MISC
+############################
+*.pid
+*.seed
+*.pid.lock
