@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="36px" height="36px" viewBox="0 0 36 36" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>icon_x</title>
+    <g id="website" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="matli_web_02" transform="translate(-1192.000000, -2771.000000)">
+            <g id="footer" transform="translate(0.000000, 2700.000000)">
+                <g id="social_icons" transform="translate(1136.000000, 68.000000)">
+                    <g id="twitter" transform="translate(56.000000, 3.000000)">
+                        <rect id="ViewBox" x="0" y="0" width="36" height="36"></rect>
+                        <path d="M27.3300757,4 L32.0680958,4 L21.7181589,15.8593947 L33.8953342,32 L24.3619168,32 L16.8896595,22.2127995 L8.34930643,32 L3.60687264,32 L14.6762295,19.3108449 L3,4.00220681 L12.7761665,4.00220681 L19.5201765,12.9464061 L27.3300757,4 Z M25.6639344,29.1576293 L28.2900378,29.1576293 L11.3417402,6.6945145 L8.5258512,6.6945145 L25.6639344,29.1576293 Z" id="Shape" fill="#FFDB9C" fill-rule="nonzero"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
