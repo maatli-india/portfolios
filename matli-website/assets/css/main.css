@@ -279,7 +279,11 @@ footer {
 }
 
 /* Footer logo */
-.footer-logo { width: 130px; height: auto; flex-shrink: 0; }
+.footer-logo {
+   width: 130px;
+    height: auto;
+     flex-shrink: 0;
+    }
 
 /* Links */
 .footer-links-group {
@@ -304,11 +308,22 @@ footer {
   transition: opacity 0.2s;
   white-space: nowrap;
   line-height: 1.4;
+   color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 500;
+  text-decoration: none;
+  padding: 5px 10px;
+  border-radius: 20px;
+  transition: color 0.3s var(--ease-out), background 0.3s var(--ease-out);
 }
 .footer-col a i {
   font-size: 16px;
 }
-.footer-col a:hover { opacity: 1; }
+.footer-col a:hover { 
+  opacity: 1;
+   color: var(--cyan);
+  background: rgba(0, 242, 255, 0.07);
+ }
 
 /* Social icons */
 .footer-socials {
