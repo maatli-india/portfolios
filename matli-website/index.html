@@ -9,7 +9,6 @@
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-  <link rel="stylesheet" href="assets/css/main.css" />
 
 
   <link rel="icon" href="/assets/images/favicon_io/favicon.ico" type="image/x-icon">
@@ -17,10 +16,79 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon_io/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon_io/favicon-16x16.png">
   <link rel="manifest" href="/assets/images/favicon_io/site.webmanifest">
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <link rel="font" href="assets/fonts/CrystalItalic-R6A.ttf">
+  <!-- <link rel="stylesheet" href="assets/css/navbar.css" /> -->
 </head>
 
 <body>
+  <script src ="assets/js/main.js" defer ></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  
+<nav class="navbar">
+
+  <div class="nav-left">
+    <div class="clock-display" id="clock">
+
+      <!-- DAY -->
+      <span class="clock-day" id="clock-day">MON</span>
+
+      <div class="clock-divider"></div>
+
+      <!-- DATE -->
+      <div class="clock-group clock-date">
+        <div class="digit" id="dd1"></div>
+        <div class="digit" id="dd2"></div>
+        <span class="date-sep">/</span>
+        <div class="digit" id="mo1"></div>
+        <div class="digit" id="mo2"></div>
+        <span class="date-sep">/</span>
+        <div class="digit" id="yr3"></div>
+        <div class="digit" id="yr4"></div>
+      </div>
+
+      <div class="clock-divider"></div>
+
+      <!-- TIME -->
+      <div class="clock-group">
+        <div class="digit" id="h1"></div>
+        <div class="digit" id="h2"></div>
+        <div class="colon">
+          <div class="colon-dot"></div>
+          <div class="colon-dot"></div>
+        </div>
+        <div class="digit" id="m1"></div>
+        <div class="digit" id="m2"></div>
+        <div class="colon">
+          <div class="colon-dot"></div>
+          <div class="colon-dot"></div>
+        </div>
+        <div class="digit" id="s1"></div>
+        <div class="digit" id="s2"></div>
+      </div>
+
+    </div>
+  </div>  <!-- ✅ nav-left closes HERE, before nav-right opens -->
+
+  <div class="nav-right">
+    <a href="/terms.html" class="nav-btn">
+      Terms
+      <span class="border-h"></span>
+      <span class="border-v"></span>
+    </a>
+    <a href="/privacy.html" class="nav-btn">
+      Privacy
+      <span class="border-h"></span>
+      <span class="border-v"></span>
+    </a>
+    <a href="#" data-bs-toggle="modal" data-bs-target="#contactModal" class="nav-btn contact">
+      Contact
+      <span class="border-h"></span>
+      <span class="border-v"></span>
+    </a>
+  </div>
+
+</nav>
   <!-- ═══════════════════════════════════════
      HERO
 ═══════════════════════════════════════ -->
@@ -69,7 +137,7 @@
           <h1>
             coming soon
           </h1>
-          <p><br> enter CLUBS !</p>
+          <p><br> Applications and devices equipped with AI can see and identify objects.!</p>
           <!-- <a href="#" class="btn-download">download now</a> -->
         </div>
         <div class="phone-wrap">
@@ -83,7 +151,7 @@
           <h1>
             Coming soon
           </h1>
-          <p><br> enter CLUBS !</p>
+          <p><br> Directly underneath AI, we have machine learning.</p>
           <!-- <a href="#" class="btn-download">download now</a> -->
         </div>
         <div class="phone-wrap">
@@ -98,7 +166,7 @@
           <h1>
             Coming soon
           </h1>
-          <p><br>with expert mentors !</p>
+          <p><br>The simplest form of machine learning is called supervised learning.</p>
           <!-- <a href="#" class="btn-download">download now</a> -->
         </div>
         <div class="phone-wrap">
