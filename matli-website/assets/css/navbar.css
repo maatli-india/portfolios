@@ -1,0 +1,422 @@
+
+/* ===== NAVBAR CONTAINER ===== */
+/* /* ===== NAVBAR (FLOATING GLASS) ===== */
+/* ════════════════════════════════════════════
+   EXTENDED ROOT VARIABLES
+════════════════════════════════════════════ */
+:root {
+  /* existing */
+  --hero-bg:      #1a0c02;
+  --page-bg:      #fce9a0;
+  --card-bg:      #f5c842;
+  --ink:          #0f0d00;
+  --cream:        #ffdb9c;
+  --footer-bg:    #0f0d00;
+  --footer-txt:   #fce9a0;
+  --legal-bg:     #1a0c02;
+  --legal-txt:    #fce9a0;
+  --legal-muted:  rgba(252, 233, 160, 0.65);
+  --legal-accent: #ffdb9c;
+  --legal-border: rgba(252, 233, 160, 0.12);
+  --radius:       28px;
+  --radius-sm:    16px;
+
+  /* glass tokens (kept for scrolled state on content pages) */
+  --glass-bg:           rgba(252, 233, 160, 0.04);
+  --glass-bg-scroll:    rgba(252, 233, 160, 0.10);
+  --glass-border:       rgba(252, 233, 160, 0.12);
+  --glass-border-scroll:rgba(252, 233, 160, 0.22);
+  --glass-blur:         14px;
+  --glass-blur-scroll:  20px;
+  --glass-shadow-scroll: 0 4px 40px rgba(15, 13, 0, 0.32),
+                          inset 0 1px 0 rgba(252, 233, 160, 0.10);
+  --nav-transition:     background 0.4s ease,
+                        backdrop-filter 0.4s ease,
+                        border-color 0.4s ease,
+                        box-shadow 0.4s ease;
+
+  /* 7-segment clock */
+  --seg-on:   #fce9a0;
+  --seg-off:  rgba(252, 233, 160, 0.08);
+  --seg-glow: 0 0 8px  rgba(252, 233, 160, 0.7),
+              0 0 18px rgba(252, 233, 160, 0.35);
+  --seg-w:    4px;    /* slightly thicker for larger size */
+  --seg-h:    18px;   /* taller segments */
+  --digit-w:  17px;   /* wider digits    */
+  --digit-h:  36px;   /* taller digits   */
+}
+
+
+/* ════════════════════════════════════════════
+   FONT
+════════════════════════════════════════════ */
+
+
+
+/* ════════════════════════════════════════════
+   NAVBAR — INVISIBLE CONTAINER
+   Layout & positioning only.
+   No background, blur, border, or shadow.
+   Only the content (clock + links) is visible.
+════════════════════════════════════════════ */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  
+
+  width: calc(100% - 48px);
+  max-width: 1200px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 10px 22px;
+  border-radius: var(--radius-sm);
+
+  /* ── all visual container styles removed ── */
+  background:        none;
+  backdrop-filter:   none;
+  -webkit-backdrop-filter: none;
+  border:            none;
+  box-shadow:        none;
+
+  z-index: 100;  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.4s ease,
+              visibility 0.4s ease,
+              var(--nav-transition);
+}
+
+/* ════════════════════════════════════════════
+   CLOCK LAYOUT GROUPS
+════════════════════════════════════════════ */
+
+/* groups date digits and time digits separately */
+.clock-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+   ;
+}
+
+/* thin vertical rule between day / date / time */
+.clock-divider {
+  width: 1px;
+  height: 22px;
+  background: rgba(252, 233, 160, 0.18);
+  border-radius: 1px;
+  margin: 0 6px;
+}
+
+/* static dot separator between DD · MM · YYYY */
+.clock-dot {
+  width:  3px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(252, 233, 160, 0.65);
+  flex-shrink: 0;
+  margin: 0 1px;
+}
+
+
+/* ════════════════════════════════════════════
+   DAY LABEL  (MON, TUE … SUN)
+   Rendered in Crystal font as plain text —
+   no segments needed for 3-letter strings.
+════════════════════════════════════════════ */
+@font-face {
+  font-family: 'Crystal';
+  src: url("../fonts/CrystalItalic-R6A.ttf") format('truetype');
+  font-weight: normal;
+  font-style:  normal;
+}
+.clock-day {
+  font-family: 'Crystal', monospace !important;
+  font-size:   1.5rem;
+  letter-spacing: 2px;
+  color: var(--seg-on);
+  text-shadow: 0 0 8px  rgba(252, 233, 160, 0.65),
+               0 0 18px rgba(252, 233, 160, 0.30);
+  opacity: 0.9;
+  margin-right: 2px;
+  user-select: none;
+}
+
+
+/* ════════════════════════════════════════════
+   RESPONSIVE — shrink date on small screens
+════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  /* hide full date, keep day + time */
+  #yr1, #yr2, #yr3, #yr4,
+  #mo1, #mo2,
+  #dd1, #dd2 { display: none; }
+
+  .clock-divider:first-of-type { display: none; }
+  .clock-dot { display: none; }
+  .clock-day { font-size: 0.68rem; letter-spacing: 1.5px; }
+}
+
+/* scrolled: only restore glass when user has scrolled
+   past the hero so content behind needs separation    */
+.navbar.scrolled {
+  background:      var(--glass-bg-scroll);
+  backdrop-filter: blur(var(--glass-blur-scroll)) saturate(160%);
+  -webkit-backdrop-filter: blur(var(--glass-blur-scroll)) saturate(160%);
+  border:          1px solid var(--glass-border-scroll);
+  box-shadow:      var(--glass-shadow-scroll);
+}
+
+
+/* ════════════════════════════════════════════
+   NAV LEFT
+════════════════════════════════════════════ */
+.nav-left {
+  display: flex;
+  align-items: center;
+}
+
+
+/* ════════════════════════════════════════════
+   CLOCK DISPLAY WRAPPER
+   Minimal recessed pill — no heavy container.
+════════════════════════════════════════════ */
+.clock-display {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 14px;
+  border-radius: 10px;
+
+  /* very subtle inner shadow so clock floats
+     without needing a solid background       */
+  background: rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(252, 233, 160, 0.08);
+}
+
+
+/* ════════════════════════════════════════════
+   7-SEGMENT DIGITS
+════════════════════════════════════════════ */
+.digit {
+  position: relative;
+  width:  var(--digit-w);
+  height: var(--digit-h);
+  flex-shrink: 0;
+}
+
+/* colons */
+.colon {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+  padding: 0 2px;
+  transition: opacity 0.4s;
+}
+.colon-dot {
+  width:  4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--seg-on);
+  box-shadow: var(--seg-glow);
+}
+
+/* segment base */
+.seg {
+  position: absolute;
+  background: var(--seg-off);
+  transition: background 0.25s ease, box-shadow 0.25s ease;
+}
+.seg.on {
+  background: var(--seg-on);
+  box-shadow: var(--seg-glow);
+}
+
+/* horizontal segments — faceted hexagon rod */
+.seg-h {
+  width:  calc(var(--digit-w) - 4px);
+  height: var(--seg-w);
+  left:   2px;
+  clip-path: polygon(
+    2px 0%, calc(100% - 2px) 0%,
+    100% 50%,
+    calc(100% - 2px) 100%, 2px 100%,
+    0% 50%
+  );
+}
+
+/* vertical segments */
+.seg-v {
+  width:  var(--seg-w);
+  height: calc(var(--seg-h) - 2px);
+  clip-path: polygon(
+    0%   2px,  50% 0%,    100% 2px,
+    100% calc(100% - 2px), 50% 100%, 0% calc(100% - 2px)
+  );
+}
+
+/* positions */
+.seg-a { top: 0;                              left: 2px; }
+.seg-b { top: 2px;                            right: 0;  }
+.seg-c { bottom: 2px;                         right: 0;  }
+.seg-d { bottom: 0;                           left: 2px; }
+.seg-e { bottom: 2px;                         left: 0;   }
+.seg-f { top: 2px;                            left: 0;   }
+.seg-g { top: calc(50% - var(--seg-w) / 2);  left: 2px; }
+
+
+/* ════════════════════════════════════════════
+   NAV RIGHT
+════════════════════════════════════════════ */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* ===== BASE LINK ===== */
+.nav-btn {
+  position: relative; /* IMPORTANT for borders */
+
+  text-decoration: none;
+  font-family: 'Crystal', 'Courier New', monospace;
+  font-size: 0.82rem;
+  font-weight: normal;
+  letter-spacing: 0.6px;
+
+  color: #ffdb9c;
+
+  padding: 6px 15px;
+  border-radius: 6px;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  overflow: hidden; /* IMPORTANT */
+
+  transition: color 0.25s ease,
+              background 0.25s ease,
+              transform 0.25s ease;
+}
+
+/* ===== FANCY BORDER ELEMENTS ===== */
+.nav-btn .border-h,
+.nav-btn .border-v {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* horizontal lines */
+.nav-btn .border-h::before,
+.nav-btn .border-h::after {
+  content: "";
+  position: absolute;
+  height: 1.5px;
+  width: 100%;
+  background: currentColor;
+
+  transition: transform 0.4s ease;
+}
+
+.nav-btn .border-h::before { top: 0; left: 0; }
+.nav-btn .border-h::after  { bottom: 0; left: 0; }
+
+/* vertical lines */
+.nav-btn .border-v::before,
+.nav-btn .border-v::after {
+  content: "";
+  position: absolute;
+  width: 1.5px;
+  height: 100%;
+  background: currentColor;
+
+  transition: transform 0.4s ease;
+}
+
+.nav-btn .border-v::before { top: 0; left: 0; }
+.nav-btn .border-v::after  { top: 0; right: 0; }
+
+/* ===== INITIAL STATE (hidden borders) ===== */
+.nav-btn .border-h::before,
+.nav-btn .border-h::after {
+  transform: scaleX(0);
+}
+
+.nav-btn .border-v::before,
+.nav-btn .border-v::after {
+  transform: scaleY(0);
+}
+
+/* ===== HOVER ===== */
+.nav-btn:hover {
+  color: var(--cream);
+  background: rgba(252, 233, 160, 0.08);
+  transform: translateY(-2px);
+}
+
+/* animate borders IN */
+.nav-btn:hover .border-h::before,
+.nav-btn:hover .border-h::after {
+  transform: scaleX(1);
+}
+
+.nav-btn:hover .border-v::before,
+.nav-btn:hover .border-v::after {
+  transform: scaleY(1);
+}
+
+
+/* ════════════════════════════════════════════
+   CONTACT LINK — one notch more visible by default
+════════════════════════════════════════════ */
+.nav-btn.contact {
+  /* slightly warmer at rest so it reads as CTA */
+  color:        rgba(252, 233, 160, 0.72);
+  border-color: rgba(252, 233, 160, 0.16);
+  background:   rgba(252, 233, 160, 0.06);
+}
+
+.nav-btn.contact:hover {
+  color:        var(--cream);
+  background:   rgba(252, 233, 160, 0.16);
+  border-color: rgba(252, 233, 160, 0.42);
+  box-shadow:   0 0 18px rgba(252, 233, 160, 0.18),
+                0 6px 22px rgba(15, 13, 0, 0.24);
+  transform:    translateY(-2px);
+}
+
+
+/* ════════════════════════════════════════════
+   RESPONSIVE
+════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 9px 14px;
+    width: calc(100% - 24px);
+    top: 10px;
+  }
+
+  :root {
+    --seg-w:    3px;
+    --seg-h:    14px;
+    --digit-w:  13px;
+    --digit-h:  28px;
+  }
+
+  .nav-btn {
+    font-size: 0.74rem;
+    padding:   5px 10px;
+  }
+
+  .colon { gap: 6px; }
+  .colon-dot { width: 3px; height: 3px; }
+}

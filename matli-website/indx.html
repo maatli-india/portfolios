@@ -25,69 +25,79 @@
   <script src ="assets/js/main.js" defer ></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
-<nav class="navbar">
-
+  <nav class="navbar">
   <div class="nav-left">
-    <div class="clock-display" id="clock">
+  <div class="clock-display" id="clock">
 
-      <!-- DAY -->
-      <span class="clock-day" id="clock-day">MON</span>
+  <!-- DAY -->
+  <span class="clock-day" id="clock-day">MON</span>
 
-      <div class="clock-divider"></div>
+  <div class="clock-divider"></div>
 
-      <!-- DATE -->
-      <div class="clock-group clock-date">
-        <div class="digit" id="dd1"></div>
-        <div class="digit" id="dd2"></div>
-        <span class="date-sep">/</span>
-        <div class="digit" id="mo1"></div>
-        <div class="digit" id="mo2"></div>
-        <span class="date-sep">/</span>
-        <div class="digit" id="yr3"></div>
-        <div class="digit" id="yr4"></div>
-      </div>
+  <!-- DATE -->
+  <div class="clock-group clock-date">
 
-      <div class="clock-divider"></div>
+    <!-- DD -->
+    <div class="digit" id="dd1"></div>
+    <div class="digit" id="dd2"></div>
 
-      <!-- TIME -->
-      <div class="clock-group">
-        <div class="digit" id="h1"></div>
-        <div class="digit" id="h2"></div>
-        <div class="colon">
-          <div class="colon-dot"></div>
-          <div class="colon-dot"></div>
-        </div>
-        <div class="digit" id="m1"></div>
-        <div class="digit" id="m2"></div>
-        <div class="colon">
-          <div class="colon-dot"></div>
-          <div class="colon-dot"></div>
-        </div>
-        <div class="digit" id="s1"></div>
-        <div class="digit" id="s2"></div>
-      </div>
+    <span class="date-sep">/</span>
 
-    </div>
-  </div>  <!-- ✅ nav-left closes HERE, before nav-right opens -->
+    <!-- MM -->
+    <div class="digit" id="mo1"></div>
+    <div class="digit" id="mo2"></div>
 
-  <div class="nav-right">
-    <a href="/terms.html" class="nav-btn">
-      Terms
-      <span class="border-h"></span>
-      <span class="border-v"></span>
-    </a>
-    <a href="/privacy.html" class="nav-btn">
-      Privacy
-      <span class="border-h"></span>
-      <span class="border-v"></span>
-    </a>
-    <a href="#" data-bs-toggle="modal" data-bs-target="#contactModal" class="nav-btn contact">
-      Contact
-      <span class="border-h"></span>
-      <span class="border-v"></span>
-    </a>
+    <span class="date-sep">/</span>
+
+    <!-- YY (better than YYYY for compact UI) -->
+    <div class="digit" id="yr3"></div>
+    <div class="digit" id="yr4"></div>
+
   </div>
 
+  <div class="clock-divider"></div>
+
+  <!-- TIME -->
+  <div class="clock-group">
+
+    <div class="digit" id="h1"></div>
+    <div class="digit" id="h2"></div>
+
+    <div class="colon">
+      <div class="colon-dot"></div>
+      <div class="colon-dot"></div>
+    </div>
+
+    <div class="digit" id="m1"></div>
+    <div class="digit" id="m2"></div>
+
+    <div class="colon">
+      <div class="colon-dot"></div>
+      <div class="colon-dot"></div>
+    </div>
+
+    <div class="digit" id="s1"></div>
+    <div class="digit" id="s2"></div>
+
+  </div>
+
+</div>
+  </div>
+  <div class="nav-right">
+  <a href="/terms.html" class="nav-btn">
+    Terms
+    <span class="border-h"></span>
+    <span class="border-v"></span>
+  </a>
+
+  <a href="/privacy.html" class="nav-btn">
+    Privacy
+    <span class="border-h"></span>
+    <span class="border-v"></span>
+  </a>
+    <a href="#" data-bs-toggle="modal" data-bs-target="#contactModal"class="nav-btn contact">Contact
+    </a>
+  </div>
 </nav>
   <!-- ═══════════════════════════════════════
      HERO
