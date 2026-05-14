@@ -202,9 +202,10 @@ body {
   line-height: 1.85;
 }
 
-/* ═══════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════
    APP CARDS
-═══════════════════════════════════════════════════════ */
+═══════════════════════════════════════════════ */
+
 .apps-section {
   background: var(--page-bg);
   padding: 16px 40px 52px;
@@ -214,6 +215,7 @@ body {
   max-width: 760px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
 
 .app-row {
@@ -222,7 +224,7 @@ body {
   align-items: center;
 }
 
-/* Yellow card */
+/* Default yellow card */
 .app-card {
   background: var(--card-bg);
   border-radius: var(--radius);
@@ -232,14 +234,13 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  box-sizing: border-box;
 }
 
-/* Stag: card text left, phone right */
 .app-row.stag .app-card {
   padding-right: 185px;
 }
 
-/* OOO: card text right, phone left */
 .app-row.ooo .app-card {
   padding-left: 185px;
   align-items: flex-end;
@@ -250,7 +251,7 @@ body {
   font-size: clamp(1.2rem, 2.2vw, 1.55rem);
   font-weight: 700;
   color: var(--ink);
-  margin-bottom: 10px;
+  margin: 0 0 10px;
 }
 
 .app-card p {
@@ -259,8 +260,10 @@ body {
   color: var(--ink);
   opacity: 0.75;
   line-height: 1.6;
-  margin-bottom: 22px;
-  max-width: 210px;
+  margin: 0 0 22px;
+
+  /* FIX: removed hidden constraint that was breaking STAG */
+  max-width: none;
 }
 
 .app-row.ooo .app-card p {
@@ -307,8 +310,145 @@ body {
 }
 
 .phone-wrap img {
-  width: 158px;
+  width: 217px;
   height: auto;
+}
+
+/* ═══════════════════════════════════════════════
+   STAG FEATURED CARD — CINEMATIC OVERLAY
+═══════════════════════════════════════════════ */
+
+.app-row--featured .app-card {
+  position: relative;
+  background: #000000;
+  min-height: 340px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 185px;
+  border-radius: var(--radius);
+}
+
+/* CENTER IMAGE CONTAINER */
+.stag-card__top {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  background: transparent;
+  border: none;
+}
+
+/* RIPPED IMAGE */
+.stag-card__rip-img {
+  width: 200%;
+  max-width: 830px;
+  height: auto;
+  object-fit: contain;
+  opacity: 0.95;
+  position: relative;
+  z-index: 1;
+}
+
+/* OVERLAY CONTENT */
+.stag-card__body {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 40px;
+  z-index: 2;
+  max-width: 500px;
+}
+
+/* DISCLAIMER TEXT */
+.app-row--featured .stag-card__description {
+  color: #000000 !important;
+  opacity: 1 !important;
+
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  padding-top: 15px;
+
+  text-align: left;
+
+  font-size: clamp(0.85rem, 0.85vw, 1.76rem);
+  line-height: 1.6;
+
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.55);
+}
+
+/* HIDE UNUSED ELEMENTS */
+.stag-card__top-label,
+.stag-card__top-title,
+.stag-card__badge {
+  position: absolute;
+
+  bottom: 18px;
+  left: 20px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 8px 14px;
+
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 8px;
+
+  background: rgba(255, 255, 255, 0.04);
+  backdrop-filter: blur(6px);
+
+  color: #ffffff;
+
+  font-size: 0.5rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+
+  text-transform: uppercase;
+
+  z-index: 20;
+}
+
+/* ═══════════════════════════════════════════════
+   RESPONSIVE
+═══════════════════════════════════════════════ */
+
+@media (max-width: 540px) {
+  .apps-section {
+    padding: 16px 20px 40px;
+  }
+
+  .app-row.stag .app-card,
+  .app-row--featured .app-card {
+    padding-right: 0;
+    min-height: 300px;
+  }
+
+  .app-row.ooo .app-card {
+    padding-left: 44px;
+  }
+
+  .stag-card__rip-img {
+    width: 82%;
+  }
+
+  .app-row--featured .phone-wrap,
+  .app-row.stag .phone-wrap,
+  .app-row.ooo .phone-wrap {
+    position: static;
+    margin-top: 16px;
+    filter: none;
+  }
 }
 
 /* ═══════════════════════════════════════════════════════
