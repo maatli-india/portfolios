@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>About Us — STAG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/main.css" />
+  <style>
+    /* ── About page layout ── */
+    .about-page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 140px 24px 100px;
+    }
+
+    .about-hero {
+      margin-bottom: 64px;
+    }
+
+    .about-hero h1 {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 24px;
+    }
+
+    .about-hero p {
+      font-size: 1.1rem;
+      color: rgba(255,255,255,0.7);
+      line-height: 1.8;
+    }
+
+    /* Divider */
+    .about-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.08);
+      margin: 56px 0;
+    }
+
+    /* For Him / For Her panels */
+    .about-panel {
+      background: #151521;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 24px;
+      padding: 40px 40px 44px;
+      margin-bottom: 32px;
+    }
+
+    .about-panel__label {
+      display: inline-block;
+      background: #e0302a;
+      color: #fff;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 6px 18px;
+      border-radius: 50px;
+      margin-bottom: 18px;
+    }
+
+    .about-panel h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .about-panel > p {
+      font-size: 0.97rem;
+      color: rgba(255,255,255,0.68);
+      line-height: 1.8;
+      margin-bottom: 28px;
+    }
+
+    .about-panel h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 16px;
+    }
+
+    /* Numbered steps list */
+    .about-steps {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .about-steps li {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .about-steps li .step-num {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      background: #e0302a;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #fff;
+      margin-top: 1px;
+    }
+
+    .about-steps li .step-body {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.72);
+      line-height: 1.65;
+    }
+
+    .about-steps li .step-body strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    /* Trust section */
+    .about-trust {
+      background: linear-gradient(135deg, #1a0a0a 0%, #200808 100%);
+      border: 1px solid rgba(224,48,42,0.2);
+      border-radius: 24px;
+      padding: 40px 40px 44px;
+      margin-top: 32px;
+    }
+
+    .about-trust h2 {
+      font-size: 1.6rem;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+
+    .about-trust p {
+      font-size: 0.97rem;
+      color: rgba(255,255,255,0.68);
+      line-height: 1.8;
+      margin-bottom: 10px;
+    }
+
+    .about-trust p:last-child {
+      margin-bottom: 0;
+      color: rgba(255,255,255,0.45);
+      font-size: 0.88rem;
+    }
+
+    @media (max-width: 640px) {
+      .about-panel { padding: 28px 20px 32px; }
+      .about-trust { padding: 28px 20px 32px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="s-nav">
+  <button class="s-nav__burger" id="navBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileNav">
+    <svg width="22" height="18" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect y="0"   width="22" height="2.5" rx="1.25" fill="currentColor"/>
+      <rect y="7.5" width="22" height="2.5" rx="1.25" fill="currentColor"/>
+      <rect y="15"  width="22" height="2.5" rx="1.25" fill="currentColor"/>
+    </svg>
+  </button>
+  <a href="index.html" class="s-nav__logo">
+    <img src="http://65.0.179.165/stag-logo.png" alt="STAG" />
+  </a>
+  <div class="s-nav__links">
+    <a href="index.html">Home</a>
+    <a href="index.html#how-it-works">How It Works</a>
+    <a href="index.html#download">Download</a>
+    <a href="index.html#contact">Contact Us</a>
+    <a href="terms.html">Terms &amp; Conditions</a>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="about.html" style="color:#e0302a;">About Us</a>
+  </div>
+  <a href="index.html#download" class="s-nav__cta">Download App</a>
+</nav>
+
+<!-- Mobile nav drawer -->
+<div class="s-nav__drawer" id="mobileNav" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation">
+  <div class="s-nav__drawer-panel">
+    <div class="s-nav__drawer-header">
+      <button class="s-nav__drawer-close" id="navClose" aria-label="Close navigation">&times;</button>
+      <img src="http://65.0.179.165/stag-logo.png" alt="STAG" class="s-nav__drawer-logo" />
+    </div>
+    <nav class="s-nav__drawer-links">
+      <a href="index.html">Home</a>
+      <a href="index.html#how-it-works">How It Works</a>
+      <a href="index.html#download">Download</a>
+      <a href="index.html#contact">Contact Us</a>
+      <a href="faq.html">FAQ</a>
+      <a href="about.html">About Us</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms &amp; Conditions</a>
+    </nav>
+    <p class="s-nav__drawer-copy">Copyright &copy; STAG a Product by Maatli Tech Private Limited</p>
+  </div>
+</div>
+
+<!-- Content -->
+<main class="about-page">
+
+  <!-- Intro -->
+  <div class="about-hero">
+    <h1>About STAG</h1>
+    <p>
+      STAG is a premium nightlife platform that connects people for exclusive club nights
+      and curated social experiences — on their own terms.
+    </p>
+    <p style="margin-top:16px;">
+      We believe a great night out should be effortless. No queues. No awkward waits.
+      No uncertainty. STAG handles every step — discovery, connection, payment, and
+      confirmation — so you can focus on what matters: enjoying the night.
+    </p>
+  </div>
+
+  <hr class="about-divider" />
+
+  <!-- For Him -->
+  <div class="about-panel">
+    <span class="about-panel__label">For Him</span>
+    <h2>For Him</h2>
+    <p>
+      Finding the right person to walk into a club with shouldn't be complicated. STAG lets
+      you browse nearby clubs, discover verified female companions in the area, and send a
+      club entry request in just a few taps.
+    </p>
+    <p>
+      Once she accepts, you pay securely inside the app — your money is held safely and only
+      released after the club entry is successfully confirmed. No risk, no stress.
+    </p>
+    <h3>How it works</h3>
+    <ol class="about-steps">
+      <li>
+        <span class="step-num">1</span>
+        <span class="step-body"><strong>Browse Clubs</strong> — Discover bars, lounges, and clubs near you based on your current location.</span>
+      </li>
+      <li>
+        <span class="step-num">2</span>
+        <span class="step-body"><strong>Select a Companion</strong> — View verified profiles and choose someone you're comfortable with.</span>
+      </li>
+      <li>
+        <span class="step-num">3</span>
+        <span class="step-body"><strong>Send a Request</strong> — Reach out with a club entry request in seconds.</span>
+      </li>
+      <li>
+        <span class="step-num">4</span>
+        <span class="step-body"><strong>Pay the Fee</strong> — Complete the in-app payment once she accepts. Funds are secured until entry is confirmed.</span>
+      </li>
+      <li>
+        <span class="step-num">5</span>
+        <span class="step-body"><strong>Meet &amp; Confirm</strong> — Arrive at the venue, meet at the entrance, and share the meetup code to complete the entry together.</span>
+      </li>
+    </ol>
+  </div>
+
+  <!-- For Her -->
+  <div class="about-panel">
+    <span class="about-panel__label">For Her</span>
+    <h2>For Her</h2>
+    <p>
+      STAG puts you in full control. You decide who you respond to, when you're available,
+      and which requests you accept — no pressure, no obligations.
+    </p>
+    <p>
+      Enable your location, receive requests from nearby users, review every detail before
+      responding, and earn directly once a meetup is confirmed. Your exact location is never
+      shared — only your approximate area is visible to others.
+    </p>
+    <h3>How it works</h3>
+    <ol class="about-steps">
+      <li>
+        <span class="step-num">1</span>
+        <span class="step-body"><strong>Complete Your Profile</strong> — Add a photo and your details so users nearby can discover you.</span>
+      </li>
+      <li>
+        <span class="step-num">2</span>
+        <span class="step-body"><strong>Enable Location</strong> — Share your approximate area to appear in nearby searches.</span>
+      </li>
+      <li>
+        <span class="step-num">3</span>
+        <span class="step-body"><strong>Receive Requests</strong> — Get notified when someone wants to enter a club with you.</span>
+      </li>
+      <li>
+        <span class="step-num">4</span>
+        <span class="step-body"><strong>Accept or Decline</strong> — You're always in control. Accept only what you're comfortable with.</span>
+      </li>
+      <li>
+        <span class="step-num">5</span>
+        <span class="step-body"><strong>Meet at the Club</strong> — Arrive at the venue at the agreed time.</span>
+      </li>
+      <li>
+        <span class="step-num">6</span>
+        <span class="step-body"><strong>Confirm &amp; Get Paid</strong> — Share the meetup code to confirm entry. Your earnings are transferred directly to your account.</span>
+      </li>
+    </ol>
+  </div>
+
+  <!-- Trust -->
+  <div class="about-trust">
+    <h2>Built on Trust</h2>
+    <p>
+      Every user on STAG is verified. Payments are held in escrow and only released once
+      both parties confirm the meetup — protecting everyone involved. Your safety and comfort
+      are not an afterthought; they are built into every step of the process.
+    </p>
+    <p>STAG is developed and maintained by Maatli Tech Private Limited.</p>
+  </div>
+
+</main>
+
+<!-- Footer -->
+<footer class="s-footer">
+  <div class="s-footer__inner">
+    <a href="index.html" class="s-footer__logo">
+      <img src="http://65.0.179.165/stag-logo.png" alt="STAG" />
+    </a>
+    <nav class="s-footer__links">
+      <a href="terms.html">Terms &amp; Conditions</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="index.html#contact">Contact Us</a>
+      <a href="about.html">About Us</a>
+      <a href="faq.html">FAQ</a>
+      <a href="index.html">Home</a>
+    </nav>
+  </div>
+  <div class="s-footer__social">
+    <a href="#" class="social-link" aria-label="Instagram">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+      </svg>
+    </a>
+    <a href="#" class="social-link" aria-label="X / Twitter">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.746l7.73-8.835L1.254 2.25H8.08l4.259 5.63L18.244 2.25zM17.083 19.77h1.833L7.084 4.126H5.117L17.083 19.77z"/>
+      </svg>
+    </a>
+    <a href="#" class="social-link" aria-label="Facebook">
+      <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+      </svg>
+    </a>
+  </div>
+  <p class="s-footer__copy">Copyright &copy; STAG a Product by Maatli Tech Private Limited</p>
+</footer>
+
+
+<script src="assets/js/nav.js"></script>
+</body>
+</html>
