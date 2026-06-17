@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STAG Admin — User Details</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body class="dash-body">
+
+  <div class="detail-page">
+    <div class="detail-topbar">
+      <a class="back-link" href="dashboard.html#users">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+        Back to Users
+      </a>
+    </div>
+
+    <!-- Always-visible hero: avatar, name, badges, email, actions -->
+    <div id="userHero">
+      <div class="detail-loading">Loading user details…</div>
+    </div>
+
+    <!-- Tab bar — hidden until user data is ready -->
+    <div class="user-tabs" id="userTabs" style="display:none">
+      <button class="user-tab active" data-tab="details">Details</button>
+      <button class="user-tab" data-tab="requests">Club Requests</button>
+      <button class="user-tab" data-tab="booked">Booked Clubs</button>
+    </div>
+
+    <!-- ── Tab: Details ────────────────────────────────────────────────────── -->
+    <div class="user-tab-panel" id="tab-details" style="display:none">
+      <!-- filled by JS renderDetails() -->
+    </div>
+
+    <!-- ── Tab: Club Requests ──────────────────────────────────────────────── -->
+    <div class="user-tab-panel" id="tab-requests" style="display:none">
+      <div class="table-toolbar">
+        <select class="filter-select" id="userReqTimelineFilter">
+          <option value="upcoming">Upcoming</option>
+          <option value="past">Past</option>
+        </select>
+        <select class="filter-select" id="userReqStatusFilter">
+          <option value="">All Statuses</option>
+          <option value="pending">Pending</option>
+          <option value="accepted">Accepted</option>
+          <option value="confirm_intended">Confirm Intended</option>
+          <option value="payment_initiated">Payment Initiated</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="verified">Verified</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="rejected">Rejected</option>
+          <option value="expired">Expired</option>
+          <option value="blocked">Blocked</option>
+        </select>
+        <button class="btn-sm btn-primary" id="userReqFilterBtn">Filter</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>ID</th><th>Club</th><th>Male User</th><th>Female User</th><th>Status</th><th>Scheduled</th><th>Amount</th></tr></thead>
+          <tbody id="userReqBody"></tbody>
+        </table>
+        <div class="table-empty hidden" id="userReqEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <p>No requests found</p>
+        </div>
+      </div>
+      <div class="pagination" id="userReqPagination"></div>
+    </div>
+
+    <!-- ── Tab: Booked Clubs ───────────────────────────────────────────────── -->
+    <div class="user-tab-panel" id="tab-booked" style="display:none">
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Club</th><th>Address</th><th>Status</th><th>Scheduled</th><th>Amount Paid</th></tr></thead>
+          <tbody id="bookedBody"></tbody>
+        </table>
+        <div class="table-empty hidden" id="bookedEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <p>No booked clubs found</p>
+        </div>
+      </div>
+      <div class="pagination" id="bookedPagination"></div>
+    </div>
+  </div>
+
+  <!-- Photo lightbox -->
+  <div class="photo-lightbox" id="photoLightbox" role="dialog" aria-modal="true" aria-label="Profile photo">
+    <button class="photo-lightbox-close" id="lightboxClose" aria-label="Close">&times;</button>
+    <img class="photo-lightbox-img" id="lightboxImg" src="" alt="Profile photo" />
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/user.js"></script>
+</body>
+</html>

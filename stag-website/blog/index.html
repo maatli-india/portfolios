@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="STAG Blog — Real stories from real users. How STAG changed their nightlife experience." />
+  <link rel="canonical" href="https://stag.org.in/blog/" />
+  <link rel="sitemap" type="application/xml" href="https://stag.org.in/sitemap.xml" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://stag.org.in/blog/" />
+  <meta property="og:site_name" content="STAG" />
+  <meta property="og:title" content="Blog — STAG" />
+  <meta property="og:description" content="Real stories from real users. How STAG changed their nightlife experience." />
+  <meta property="og:image" content="https://stag.org.in/assets/images/stag_web_female.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>Blog — STAG</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/assets/css/main.css" />
+  <style>
+    /* ── Blog page ── */
+    .blog-page {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 140px 24px 100px;
+    }
+
+    .blog-hero {
+      margin-bottom: 72px;
+    }
+
+    .blog-hero__label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: #c0392b;
+      margin-bottom: 14px;
+    }
+
+    .blog-hero h1 {
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 900;
+      line-height: 1.1;
+      margin-bottom: 20px;
+    }
+
+    .blog-hero p {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.65);
+      line-height: 1.8;
+      max-width: 580px;
+    }
+
+    /* ── Divider ── */
+    .blog-divider {
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.07);
+      margin: 56px 0;
+    }
+
+    /* ── Article card ── */
+    .blog-article {
+      background: #0f0f1a;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 24px;
+      padding: 44px 44px 48px;
+      margin-bottom: 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .blog-article::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #c0392b, #8e24aa);
+    }
+
+    .blog-article__meta {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .blog-article__tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #c0392b;
+      background: rgba(192,57,43,0.12);
+      border: 1px solid rgba(192,57,43,0.25);
+      border-radius: 20px;
+      padding: 4px 12px;
+    }
+
+    .blog-article__date {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+    }
+
+    .blog-article__read {
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.35);
+      margin-left: auto;
+    }
+
+    .blog-article h2 {
+      font-size: clamp(1.35rem, 3vw, 1.75rem);
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 24px;
+      color: #fff;
+    }
+
+    .blog-article__body p {
+      font-size: 0.97rem;
+      color: rgba(255,255,255,0.68);
+      line-height: 1.85;
+      margin-bottom: 18px;
+    }
+
+    .blog-article__body p:last-child {
+      margin-bottom: 0;
+    }
+
+    .blog-article__body strong {
+      color: rgba(255,255,255,0.9);
+      font-weight: 600;
+    }
+
+    .blog-article__quote {
+      border-left: 3px solid #c0392b;
+      margin: 28px 0;
+      padding: 18px 24px;
+      background: rgba(192,57,43,0.06);
+      border-radius: 0 12px 12px 0;
+    }
+
+    .blog-article__quote p {
+      font-style: italic;
+      color: rgba(255,255,255,0.8) !important;
+      font-size: 1.02rem !important;
+      margin: 0 !important;
+    }
+
+    .blog-cta {
+      text-align: center;
+      margin-top: 72px;
+      padding: 56px 40px;
+      background: linear-gradient(135deg, rgba(192,57,43,0.12), rgba(142,36,170,0.08));
+      border: 1px solid rgba(192,57,43,0.2);
+      border-radius: 24px;
+    }
+
+    .blog-cta h3 {
+      font-size: clamp(1.6rem, 4vw, 2.2rem);
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+
+    .blog-cta p {
+      color: rgba(255,255,255,0.6);
+      margin-bottom: 32px;
+      font-size: 1rem;
+    }
+
+    .blog-cta__btn {
+      display: inline-block;
+      background: #c0392b;
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.95rem;
+      padding: 14px 36px;
+      border-radius: 50px;
+      text-decoration: none;
+      transition: background 0.2s;
+    }
+
+    .blog-cta__btn:hover {
+      background: #a93226;
+    }
+
+    @media (max-width: 600px) {
+      .blog-article {
+        padding: 28px 22px 32px;
+      }
+      .blog-article__read {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════════════════════ NAVBAR ════════════════════ -->
+<nav class="s-nav">
+  <button class="s-nav__burger" id="navBurger" aria-label="Open navigation" aria-expanded="false" aria-controls="mobileNav">
+    <svg width="22" height="18" viewBox="0 0 22 18" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect y="0"   width="22" height="2.5" rx="1.25" fill="currentColor"/>
+      <rect y="7.5" width="22" height="2.5" rx="1.25" fill="currentColor"/>
+      <rect y="15"  width="22" height="2.5" rx="1.25" fill="currentColor"/>
+    </svg>
+  </button>
+  <a href="/" class="s-nav__logo">
+    <img src="/assets/images/stag-logo.png" alt="STAG" />
+  </a>
+  <div class="s-nav__links">
+    <a href="/#home">Home</a>
+    <a href="/#how-it-works">How It Works</a>
+    <a href="/#download">Download</a>
+    <a href="/#contact">Contact Us</a>
+    <a href="/blog/" aria-current="page">Blogs</a>
+    <a href="/about/">About Us</a>
+    <a href="/terms/">Terms &amp; Conditions</a>
+    <a href="/privacy/">Privacy Policy</a>
+  </div>
+  <a href="/admin/" class="s-nav__cta">Login</a>
+</nav>
+
+<!-- Mobile nav drawer -->
+<div class="s-nav__drawer" id="mobileNav" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Navigation">
+  <div class="s-nav__drawer-panel">
+    <div class="s-nav__drawer-header">
+      <button class="s-nav__drawer-close" id="navClose" aria-label="Close navigation">&times;</button>
+      <img src="/assets/images/stag-logo.png" alt="STAG" class="s-nav__drawer-logo" />
+    </div>
+    <nav class="s-nav__drawer-links">
+      <a href="/#home">Home</a>
+      <a href="/#how-it-works">How It Works</a>
+      <a href="/#download">Download</a>
+      <a href="/#contact">Contact Us</a>
+      <a href="/blog/">Blogs</a>
+      <a href="/faq/">FAQ</a>
+      <a href="/about/">About Us</a>
+      <a href="/privacy/">Privacy Policy</a>
+      <a href="/terms/">Terms &amp; Conditions</a>
+    </nav>
+    <p class="s-nav__drawer-copy">Copyright &copy; STAG a Product by Maatli Tech Private Limited</p>
+  </div>
+</div>
+
+<!-- ════════════════════ MAIN ════════════════════ -->
+<main class="blog-page">
+
+  <!-- Hero -->
+  <header class="blog-hero">
+    <p class="blog-hero__label">Real Stories</p>
+    <h1>The STAG Blog</h1>
+    <p>Honest experiences from people who refused to let a "couples only" sign ruin their night.</p>
+  </header>
+
+  <!-- ── Article 1 ── -->
+  <article class="blog-article" id="post-1">
+    <div class="blog-article__meta">
+      <span class="blog-article__tag">User Story</span>
+      <span class="blog-article__date">June 2026</span>
+      <span class="blog-article__read">5 min read</span>
+    </div>
+    <h2>How STAG Saved Me from Embarrassment at the Club on a Random Weekend</h2>
+    <div class="blog-article__body">
+      <p>
+        It was a Saturday night and my friends and I had been planning this outing for two weeks. We had the venue, the playlist in our heads, and the outfits ready. There was just one thing none of us had checked — the entry policy.
+      </p>
+      <p>
+        We pulled up to one of Bangalore's most talked-about clubs at 11 PM, buzzing with excitement. The bouncer took one look at our group of four guys and said the three words that killed the vibe completely: <strong>"Couples only, bro."</strong>
+      </p>
+      <p>
+        I had heard this phrase before, but I always assumed it was something you could talk your way past with enough confidence or the right outfit. I was wrong. We stood outside for fifteen minutes trying to negotiate while a queue of couples breezed in behind us. The embarrassment of walking back to the cab with nothing to show for it was real.
+      </p>
+      <div class="blog-article__quote">
+        <p>"We stood outside for fifteen minutes trying to negotiate while a queue of couples breezed in behind us."</p>
+      </div>
+      <p>
+        A friend forwarded me a link to STAG on our group chat that same night. I downloaded it mostly out of frustration, expecting nothing. But within twenty minutes I had connected with a verified female companion near the venue, confirmed the time and meeting point, and the two of us were inside the club by midnight.
+      </p>
+      <p>
+        No awkward negotiations at the door. No bouncer staring you down. Just a smooth, straightforward entry — exactly the way a night out should start. We went our separate ways inside and I had one of the best nights I've had in months.
+      </p>
+      <p>
+        STAG doesn't promise you the perfect night. But it does remove the one obstacle that was standing between me and the door. That's enough for me to use it every weekend now.
+      </p>
+    </div>
+  </article>
+
+  <hr class="blog-divider" />
+
+  <!-- ── Article 2 ── -->
+  <article class="blog-article" id="post-2">
+    <div class="blog-article__meta">
+      <span class="blog-article__tag">Life Story</span>
+      <span class="blog-article__date">May 2026</span>
+      <span class="blog-article__read">6 min read</span>
+    </div>
+    <h2>I Met a Girl Through STAG for Club Entry — and Eventually Found My Soulmate</h2>
+    <div class="blog-article__body">
+      <p>
+        I know how this sounds. Bear with me.
+      </p>
+      <p>
+        Last December, I was trying to get into a high-end lounge for a colleague's birthday. The venue had a strict couple-entry policy and none of my friends could make it. I came across STAG while scrolling through Reddit at the last minute, downloaded it, and sent a request to a female user named Priya who was near the venue.
+      </p>
+      <p>
+        She accepted. We confirmed the details. We met at the entrance and walked in. It was supposed to be a transaction — a practical solution to a logistical problem. But while we were waiting for the host to acknowledge the entry code, we got talking. She had this quiet confidence about her and an opinion about everything, which I found incredibly attractive.
+      </p>
+      <div class="blog-article__quote">
+        <p>"It was supposed to be a transaction — a practical solution to a logistical problem."</p>
+      </div>
+      <p>
+        We went our separate ways inside, as expected. But before leaving, I found her at the bar and asked if she'd like to grab coffee sometime — not through the app, just as people. She laughed and said she'd think about it.
+      </p>
+      <p>
+        She thought about it. We got coffee that Thursday. Then dinner the following week. Six months later, we're still together.
+      </p>
+      <p>
+        I want to be clear — <strong>STAG is not a dating app</strong>. It is explicitly not designed for that. The app keeps interactions professional and structured, which is exactly why it worked. It created a situation where two people had to meet, be on their best behaviour, and handle something together like adults. Turns out that's not a bad foundation for something real.
+      </p>
+      <p>
+        I still use STAG regularly. Priya still uses it too — on her own terms, for her own reasons. And every now and then, we joke about the fact that a couple-entry policy brought us together.
+      </p>
+    </div>
+  </article>
+
+  <hr class="blog-divider" />
+
+  <!-- ── Article 3 ── -->
+  <article class="blog-article" id="post-3">
+    <div class="blog-article__meta">
+      <span class="blog-article__tag">New Year's Eve</span>
+      <span class="blog-article__date">January 2026</span>
+      <span class="blog-article__read">7 min read</span>
+    </div>
+    <h2>I Couldn't Get Into Any Club on New Year's Eve — Until I Found STAG</h2>
+    <div class="blog-article__body">
+      <p>
+        New Year's Eve is the one night of the year when every club in the city enforces couple entry without exception. I found this out the hard way after spending three hours trying to get into five different venues on the night of December 31st.
+      </p>
+      <p>
+        It started at 9 PM with what was supposed to be our plan A — a rooftop venue with a DJ and a countdown. Couple entry only. Plan B was a jazz lounge my colleague had recommended. Couple entry only. By the time we reached venues three, four, and five, I already knew what the answer would be. I was right every time.
+      </p>
+      <p>
+        My friends had all managed to pair up or had made other arrangements. I was alone on the most celebrated night of the year, sitting in a cab outside a club with a bouncer who looked like he was enjoying turning solo men away.
+      </p>
+      <div class="blog-article__quote">
+        <p>"I was alone on the most celebrated night of the year, sitting in a cab outside a club with a bouncer who looked like he was enjoying turning solo men away."</p>
+      </div>
+      <p>
+        At 10:15 PM I downloaded STAG on a recommendation from a friend's Instagram story. The app was straightforward — I could see verified female users in my area, view their profiles, select a time and meeting point, and send a request. I was skeptical. It felt too late in the evening for this to work.
+      </p>
+      <p>
+        The first request I sent was accepted within eight minutes. We confirmed the venue — one of the original five I had tried — and the meeting point at the entrance. I paid through the app. At 11:30 PM I was inside, watching the countdown with a drink in hand.
+      </p>
+      <p>
+        When the clock hit midnight and the whole room erupted, I genuinely felt grateful. Not just for getting in, but for not spending New Year's alone in a car. There's something deeply ordinary about being inside a crowded room when everyone is cheering — and STAG gave me access to that ordinary thing when nothing else could.
+      </p>
+      <p>
+        I've since told at least a dozen people about this app. Not because I think it's magic. But because it solves a very specific, very real problem that no one talks about openly. Couple entry rules exist everywhere, and they affect more people than venues want to admit.
+      </p>
+      <p>
+        <strong>STAG made sure my year ended the way it was supposed to.</strong> That's not a small thing.
+      </p>
+    </div>
+  </article>
+
+  <!-- ── CTA ── -->
+  <div class="blog-cta">
+    <h3>Ready to never get turned away again?</h3>
+    <p>Join thousands of users who are already getting seamless club entry with STAG.</p>
+    <a href="/#download" class="blog-cta__btn">Download the App</a>
+  </div>
+
+</main>
+
+<!-- ════════════════════ FOOTER ════════════════════ -->
+<footer style="text-align:center;padding:40px 24px;color:rgba(255,255,255,0.3);font-size:0.8rem;border-top:1px solid rgba(255,255,255,0.06);">
+  <p>&copy; 2026 STAG — a Product by Maatli Tech Private Limited</p>
+  <p style="margin-top:10px;">
+    <a href="/privacy/" style="color:rgba(255,255,255,0.4);margin:0 10px;text-decoration:none;">Privacy Policy</a>
+    <a href="/terms/" style="color:rgba(255,255,255,0.4);margin:0 10px;text-decoration:none;">Terms &amp; Conditions</a>
+    <a href="/about/" style="color:rgba(255,255,255,0.4);margin:0 10px;text-decoration:none;">About Us</a>
+  </p>
+</footer>
+
+<script>
+  // Mobile nav toggle
+  const burger = document.getElementById('navBurger');
+  const drawer = document.getElementById('mobileNav');
+  const closeBtn = document.getElementById('navClose');
+
+  burger?.addEventListener('click', () => {
+    const open = drawer.getAttribute('aria-hidden') === 'true';
+    drawer.setAttribute('aria-hidden', String(!open));
+    burger.setAttribute('aria-expanded', String(open));
+    document.body.style.overflow = open ? 'hidden' : '';
+  });
+
+  closeBtn?.addEventListener('click', () => {
+    drawer.setAttribute('aria-hidden', 'true');
+    burger.setAttribute('aria-expanded', 'false');
+    document.body.style.overflow = '';
+  });
+
+  drawer?.querySelectorAll('a').forEach(link => {
+    link.addEventListener('click', () => {
+      drawer.setAttribute('aria-hidden', 'true');
+      burger.setAttribute('aria-expanded', 'false');
+      document.body.style.overflow = '';
+    });
+  });
+</script>
+
+</body>
+</html>
