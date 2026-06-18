@@ -5,7 +5,7 @@
   'use strict';
 
   // ── Auth guard ──────────────────────────────────────────────────────────────
-  const token = sessionStorage.getItem(TOKEN_KEY);
+  const token = localStorage.getItem(TOKEN_KEY);
   if (!token) {
     window.location.href = 'index.html';
     return;
@@ -31,7 +31,7 @@
       },
     });
     if (res.status === 401) {
-      sessionStorage.clear();
+      localStorage.clear();
       window.location.href = 'index.html';
       return { ok: false, data: null };
     }
@@ -183,7 +183,9 @@
   }
 
   // ── Tab switching ───────────────────────────────────────────────────────────
-  const tabLoaded = { details: false, requests: false, booked: false };
+  const tabLoaded = { details: false, requests: false, booked: false, bank: false, availability: false, location: false };
+  let _cachedUser = null;
+  let _cachedLocations = [];
 
   function activateTab(name) {
     console.log('[STAG Admin] User detail tab:', name);
@@ -202,6 +204,18 @@
     if (name === 'booked' && !tabLoaded.booked) {
       tabLoaded.booked = true;
       loadBookedClubs(1);
+    }
+    if (name === 'bank' && !tabLoaded.bank) {
+      tabLoaded.bank = true;
+      loadBankAccount();
+    }
+    if (name === 'availability' && !tabLoaded.availability) {
+      tabLoaded.availability = true;
+      loadAvailabilityTab();
+    }
+    if (name === 'location' && !tabLoaded.location) {
+      tabLoaded.location = true;
+      loadLocationTab();
     }
   }
 
@@ -239,11 +253,32 @@
   }
 
   // ── Details tab content ──────────────────────────────────────────────────────
-  function renderDetails(u) {
-    const phone  = ((u.phoneExt || '') + (u.phone || '')) || '—';
-    const rating = u.ratings != null
+  function renderDetails(u, locations) {
+    const phone    = ((u.phoneExt || '') + (u.phone || '')) || '—';
+    const rating   = u.ratings != null
       ? `${Number(u.ratings).toFixed(1)} (${u.ratingCount || 0})`
       : '—';
+    const isFemale = u.gender === 'female';
+    const isAvailable = u.status === 'active';
+
+    // Compact availability toggle row (female users only)
+    const availabilityRow = isFemale ? `
+      <p class="detail-section-title" style="margin-top:24px">Availability</p>
+      <div class="detail-grid">
+        <div class="detail-field" style="grid-column:1/-1">
+          <div class="avail-toggle-row">
+            <span class="avail-toggle-label">Status</span>
+            <label class="toggle-switch" title="Toggle availability">
+              <input type="checkbox" id="availToggleInput" ${isAvailable ? 'checked' : ''}>
+              <span class="toggle-track"></span>
+            </label>
+            <span class="avail-status-text" id="availStatusText" style="color:${isAvailable ? '#50c878' : 'var(--muted)'}">
+              ${isAvailable ? 'Available' : 'Inactive'}
+            </span>
+          </div>
+        </div>
+      </div>
+    ` : '';
 
     document.getElementById('tab-details').innerHTML = `
       <p class="detail-section-title">Contact</p>
@@ -278,9 +313,147 @@
         ${field('App Version',  esc(u.appVersion)    || '—')}
         ${field('Country',      esc(u.deviceCountry) || '—')}
       </div>
+
+      ${availabilityRow}
     `;
 
+    // Wire toggle switch
+    const toggleInput = document.getElementById('availToggleInput');
+    if (toggleInput) {
+      toggleInput.addEventListener('change', async () => {
+        toggleInput.disabled = true;
+        const { ok, data: updated } = await apiAbs(
+          API_BASE + '/v1/users/' + encodeURIComponent(userId) + '/toggle-available',
+          { method: 'PATCH' }
+        );
+        if (!ok) {
+          toast('Failed to update availability');
+          toggleInput.checked = !toggleInput.checked; // revert
+          toggleInput.disabled = false;
+          return;
+        }
+        // Update status text + colour immediately without full reload
+        const nowAvailable = updated && updated.status === 'active';
+        const statusText = document.getElementById('availStatusText');
+        if (statusText) {
+          statusText.textContent = nowAvailable ? 'Available' : 'Inactive';
+          statusText.style.color = nowAvailable ? '#50c878' : 'var(--muted)';
+        }
+        toggleInput.checked = nowAvailable;
+        toggleInput.disabled = false;
+        toast('Availability updated');
+        // Reset availability tab so it re-renders next time
+        tabLoaded.availability = false;
+        // Update cached user status
+        if (_cachedUser) _cachedUser.status = updated ? updated.status : (nowAvailable ? 'active' : 'inactive');
+      });
+    }
+
     tabLoaded.details = true;
+  }
+
+  // ── Availability tab ─────────────────────────────────────────────────────────
+  function loadAvailabilityTab() {
+    const u = _cachedUser;
+    const container = document.getElementById('availabilityBody');
+    if (!u) { container.innerHTML = '<p style="color:var(--muted)">No data.</p>'; return; }
+
+    const isAvailable = u.status === 'active';
+    const changelog = Array.isArray(u.availabilityChangelog) ? u.availabilityChangelog : [];
+
+    container.innerHTML = `
+      <p class="detail-section-title">Current Availability</p>
+      <div class="detail-grid" style="margin-bottom:24px">
+        <div class="detail-field" style="grid-column:1/-1">
+          <div class="avail-toggle-row">
+            <span class="avail-toggle-label">Status</span>
+            <label class="toggle-switch" title="Toggle availability">
+              <input type="checkbox" id="availToggleInput2" ${isAvailable ? 'checked' : ''}>
+              <span class="toggle-track"></span>
+            </label>
+            <span class="avail-status-text" id="availStatusText2" style="color:${isAvailable ? '#50c878' : 'var(--muted)'}">
+              ${isAvailable ? 'Available' : 'Inactive'}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <p class="detail-section-title">Availability History
+        <span style="font-size:0.75rem;font-weight:400;color:var(--muted);margin-left:8px">(${changelog.length} record${changelog.length !== 1 ? 's' : ''})</span>
+      </p>
+      ${changelog.length === 0
+        ? '<p style="color:var(--muted);font-size:0.85rem;padding:8px 0">No history yet.</p>'
+        : `<div class="table-wrap" style="margin-top:0">
+            <table class="data-table">
+              <thead><tr><th>Changed At</th><th>Changed By</th><th>Role</th><th>To Status</th></tr></thead>
+              <tbody>
+                ${[...changelog].reverse().map(entry => `
+                  <tr>
+                    <td style="color:var(--muted)">${fmtDate(entry.changedAt)}</td>
+                    <td style="font-family:monospace;font-size:0.78rem">${esc(entry.changedBy) || '—'}</td>
+                    <td>${entry.changedByRole === 'admin'
+                      ? '<span class="badge badge-blocked">Admin</span>'
+                      : '<span class="badge badge-active">User</span>'}</td>
+                    <td>${badge(entry.toStatus, statusMap)}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>`}
+    `;
+
+    // Wire second toggle
+    const t2 = document.getElementById('availToggleInput2');
+    if (t2) {
+      t2.addEventListener('change', async () => {
+        t2.disabled = true;
+        const { ok, data: updated } = await apiAbs(
+          API_BASE + '/v1/users/' + encodeURIComponent(userId) + '/toggle-available',
+          { method: 'PATCH' }
+        );
+        if (!ok) {
+          toast('Failed to update availability');
+          t2.checked = !t2.checked;
+          t2.disabled = false;
+          return;
+        }
+        toast('Availability updated');
+        // Refresh availability tab fully
+        if (updated && _cachedUser) _cachedUser.status = updated.status;
+        tabLoaded.availability = false;
+        tabLoaded.details = false;
+        loadAvailabilityTab();
+        tabLoaded.availability = true;
+      });
+    }
+  }
+
+  // ── Location tab ─────────────────────────────────────────────────────────────
+  function loadLocationTab() {
+    const locs = _cachedLocations;
+    const container = document.getElementById('locationBody');
+
+    container.innerHTML = `
+      <p class="detail-section-title">Current Location
+        <span style="font-size:0.75rem;font-weight:400;color:var(--muted);margin-left:8px">(${locs.length} record${locs.length !== 1 ? 's' : ''})</span>
+      </p>
+      ${locs.length === 0
+        ? '<p style="color:var(--muted);font-size:0.85rem;padding:8px 0">No location data available.</p>'
+        : `<div class="table-wrap" style="margin-top:0">
+            <table class="data-table">
+              <thead><tr><th>Name</th><th>Address</th><th>Lat</th><th>Lng</th><th>Updated</th></tr></thead>
+              <tbody>
+                ${locs.map(loc => `
+                  <tr>
+                    <td>${esc(loc.name) || '—'}</td>
+                    <td>${esc(loc.address) || '—'}</td>
+                    <td style="font-family:monospace;font-size:0.78rem">${loc.lat != null ? loc.lat : '—'}</td>
+                    <td style="font-family:monospace;font-size:0.78rem">${loc.lng != null ? loc.lng : '—'}</td>
+                    <td style="color:var(--muted)">${fmtDate(loc.updated_at)}</td>
+                  </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>`}
+    `;
   }
 
   async function toggleBan() {
@@ -419,18 +592,74 @@
 
     renderPagination('bookedPagination', p, totalPages, loadBookedClubs);
   }
+  // ── Bank Account tab ──────────────────────────────────────────────────────────────
+  async function loadBankAccount() {
+    const container = document.getElementById('bankAccountBody');
+    container.innerHTML = '<div class="detail-loading">Loading bank account…</div>';
 
+    const { ok, data } = await apiAbs(
+      API_BASE + '/v1/users/' + encodeURIComponent(userId) + '/bank-account'
+    );
+
+    if (!ok || !data || !data.accountNumber) {
+      container.innerHTML = `
+        <div class="table-empty" style="padding:40px 0">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40" height="40"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          <p>No bank account on file</p>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = `
+      <p class="detail-section-title">Bank Account Details</p>
+      <div class="detail-grid">
+        ${field('Account Holder', esc(data.accountHolderName) || '—')}
+        ${field('Account Number', `<span style="font-family:monospace;letter-spacing:0.08em">${esc(data.accountNumber)}</span>`)}
+        ${field('IFSC Code',      `<span style="font-family:monospace">${esc(data.ifsc) || '—'}</span>`)}
+        ${field('Bank Name',      esc(data.bankName) || '—')}
+        ${field('Account Type',   esc(data.accountType) || '—')}
+      </div>`;
+  }
   // ── Load ────────────────────────────────────────────────────────────────────
   async function load() {
-    const { ok, data } = await apiAbs(API_BASE + '/v1/users/' + encodeURIComponent(userId));
-    if (!ok || !data || !data.id) {
+    // Fetch user + location in parallel
+    const [userRes, locRes] = await Promise.all([
+      apiAbs(API_BASE + '/v1/users/' + encodeURIComponent(userId)),
+      apiAbs(API_BASE + '/v1/userlocation/user-locations/' + encodeURIComponent(userId)),
+    ]);
+
+    const data = userRes.data;
+    if (!userRes.ok || !data || !data.id) {
       hero.innerHTML = '<div class="detail-error">User not found.</div>';
       return;
     }
     console.log('[STAG Admin] User detail page loaded for userId:', userId, '— name:', data.name);
 
+    // The endpoint returns a single UserLocation object (not an array)
+    const locations = (locRes.ok && locRes.data && locRes.data.id)
+      ? [locRes.data]
+      : [];
+
+    // Cache for tab loaders
+    _cachedUser = data;
+    _cachedLocations = locations;
+    // Reset lazy tabs so they re-render with fresh data
+    tabLoaded.availability = false;
+    tabLoaded.location = false;
+    tabLoaded.details = false;
+
     renderHero(data);
-    renderDetails(data);
+    renderDetails(data, locations);
+
+    // Show female-only tabs
+    const bankTab = document.getElementById('bankTab');
+    const availabilityTab = document.getElementById('availabilityTab');
+    const locationTab = document.getElementById('locationTab');
+    if (data.gender === 'female') {
+      if (bankTab) bankTab.style.display = '';
+      if (availabilityTab) availabilityTab.style.display = '';
+      if (locationTab) locationTab.style.display = '';
+    }
 
     // Show tab bar and activate the Details tab
     const tabBar = document.getElementById('userTabs');

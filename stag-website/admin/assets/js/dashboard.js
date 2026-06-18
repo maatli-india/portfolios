@@ -4,14 +4,24 @@
 (function () {
   'use strict';
 
+  // ── Migrate old sessionStorage token → localStorage (for users logged in before the fix) ──
+  (function migrateToken() {
+    const old = sessionStorage.getItem(TOKEN_KEY);
+    if (old && !localStorage.getItem(TOKEN_KEY)) {
+      localStorage.setItem(TOKEN_KEY, old);
+      const oldInfo = sessionStorage.getItem(ADMIN_INFO_KEY);
+      if (oldInfo) localStorage.setItem(ADMIN_INFO_KEY, oldInfo);
+    }
+  })();
+
   // ── Auth guard ──────────────────────────────────────────────────────────────
-  const token = sessionStorage.getItem(TOKEN_KEY);
+  const token = localStorage.getItem(TOKEN_KEY);
   if (!token) {
     window.location.href = 'index.html';
     return;
   }
 
-  const adminInfo = JSON.parse(sessionStorage.getItem(ADMIN_INFO_KEY) || '{}');
+  const adminInfo = JSON.parse(localStorage.getItem(ADMIN_INFO_KEY) || '{}');
   const roleLabel = (adminInfo.role || 'admin');
   const nameLabel = adminInfo.username || adminInfo.email || 'Admin';
   const avatarChar = nameLabel.charAt(0).toUpperCase();
@@ -44,7 +54,7 @@
       },
     });
     if (res.status === 401) {
-      sessionStorage.clear();
+      localStorage.clear();
       window.location.href = 'index.html';
       return null;
     }
@@ -91,6 +101,15 @@
     if (!str) return '—';
     const d = new Date(str);
     return isNaN(d) ? str : d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  function fmtDateTime(str) {
+    if (!str) return '—';
+    const d = new Date(str);
+    if (isNaN(d)) return str;
+    const date = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    const time = d.toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit', hour12: true });
+    return date + ', ' + time;
   }
 
   function fmtCurrency(n) {
@@ -188,7 +207,7 @@
   });
 
   document.getElementById('logoutBtn').addEventListener('click', () => {
-    sessionStorage.clear();
+    localStorage.clear();
     window.location.href = 'index.html';
   });
 
@@ -394,18 +413,48 @@
 
   // ── Reports ──────────────────────────────────────────────────────────────────
   let reportPage = 1;
+  let reportStatusFilter = '';
+  let _reportsCache = {};
+
+  const rptStatusMap = {
+    pending:  'badge-rpt-pending',
+    resolved: 'badge-rpt-resolved',
+    closed:   'badge-rpt-closed',
+  };
+
+  // Quick-filter chips
+  document.querySelectorAll('.rpt-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('.rpt-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      reportStatusFilter = chip.dataset.status;
+      loadReports(1);
+    });
+  });
+
+  document.getElementById('rptFilterBtn').addEventListener('click', () => loadReports(1));
+  document.getElementById('rptTypeFilter').addEventListener('change', () => loadReports(1));
 
   async function loadReports(p) {
     reportPage = p;
+    const type = document.getElementById('rptTypeFilter').value;
     const params = new URLSearchParams({ page: p, limit: 20 });
-    const json = await api('/reports/users?' + params);
-    if (!json || !json.success) { toast('Failed to load reports'); return; }
+    if (reportStatusFilter) params.set('status', reportStatusFilter);
+    if (type) params.set('requestType', type);
 
-    const { items, totalPages } = json.data;
+    const json = await apiAbs(API_BASE + '/v1/request-report?' + params);
     const tbody = document.getElementById('reportsBody');
     const empty = document.getElementById('reportsEmpty');
 
-    if (!items || items.length === 0) {
+    if (!json || !Array.isArray(json.reports)) {
+      toast('Failed to load reports');
+      return;
+    }
+
+    const items = json.reports;
+    const totalPages = json.totalPages || 1;
+
+    if (items.length === 0) {
       tbody.innerHTML = '';
       empty.classList.remove('hidden');
       document.getElementById('reportsPagination').innerHTML = '';
@@ -413,17 +462,258 @@
     }
     empty.classList.add('hidden');
 
-    tbody.innerHTML = items.map(r => `
-      <tr>
-        <td><strong>${r.reportedUserName || '—'}</strong><br/><span style="font-size:0.73rem;color:var(--muted)">${shortId(r.reportedUserId)}</span></td>
-        <td>${r.reason || '—'}</td>
-        <td>${r.reportedByUserName || '—'}</td>
-        <td><span class="badge badge-blocked">${r.reportCount || 1}</span></td>
-        <td style="color:var(--muted)">${fmtDate(r.reportedAt)}</td>
-      </tr>
-    `).join('');
+    // Cache reports by ID so the panel can access them without re-fetching
+    _reportsCache = {};
+    items.forEach(r => { _reportsCache[r.id] = r; });
+
+    tbody.innerHTML = items.map(r => {
+      const count = Array.isArray(r.userReports) ? r.userReports.length : 0;
+      // Latest reporter name + date
+      const latest = count > 0 ? r.userReports[count - 1] : null;
+      const latestName = latest ? esc(latest.userName || 'Unknown') : '—';
+      const latestDate = latest ? fmtDateTime(latest.reportedAt) : fmtDateTime(r.createdAt);
+      // All reporter names for tooltip when multiple
+      const allNames = count > 1
+        ? r.userReports.map((ur, i) => `#${i+1} ${esc(ur.userName || 'User')}`).join(' · ')
+        : '';
+      // Truncated reason
+      const latestReason = latest ? latest.reason : '—';
+      const typeBadgeCls = r.requestType === 'event' ? 'badge-premium' : 'badge-basic';
+      return `
+        <tr>
+          <td>
+            <div style="display:flex;flex-direction:column;gap:2px">
+              <span style="font-weight:600;color:var(--white)">${latestName}</span>
+              ${count > 1 ? `<span style="font-size:0.71rem;color:var(--muted)" title="${allNames}">+${count - 1} more reporter${count > 2 ? 's' : ''}</span>` : ''}
+            </div>
+          </td>
+          <td class="rpt-reason-cell" title="${esc(latestReason)}">${esc(latestReason)}</td>
+          <td><span class="badge ${typeBadgeCls}">${esc(r.requestType || 'club')}</span></td>
+          <td><span class="badge badge-blocked">${count}</span></td>
+          <td>${badge(r.status, rptStatusMap)}</td>
+          <td style="color:var(--muted)">${latestDate}</td>
+          <td><button class="btn-ghost" onclick="openReportPanel('${esc(r.id)}')">Review</button></td>
+        </tr>
+      `;
+    }).join('');
 
     renderPagination('reportsPagination', p, totalPages, loadReports);
+  }
+
+  // ── Report detail panel ───────────────────────────────────────────────────────
+  const rptPanelOverlay = document.getElementById('rptPanelOverlay');
+  const rptPanelBody    = document.getElementById('rptPanelBody');
+
+  function closeReportPanel() {
+    rptPanelOverlay.classList.add('hidden');
+    rptPanelBody.innerHTML = '<div class="rpt-loading">Loading\u2026</div>';
+  }
+  document.getElementById('rptPanelClose').addEventListener('click', closeReportPanel);
+  rptPanelOverlay.addEventListener('click', e => { if (e.target === rptPanelOverlay) closeReportPanel(); });
+
+  function buildPanelBody(report, req) {
+    const count    = Array.isArray(report.userReports) ? report.userReports.length : 0;
+    const hasNotes = Array.isArray(report.adminNotes) && report.adminNotes.length > 0;
+
+    // ── Request info ──────────────────────────────────────────────────────────
+    const reqBlock = req ? `
+      <div class="rpt-block">
+        <div class="rpt-block-title">Request Details</div>
+        <div class="rpt-info-grid">
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">Club / Venue</span>
+            <span class="rpt-info-value">${esc(req.clubName || '\u2014')}</span>
+          </div>
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">Scheduled</span>
+            <span class="rpt-info-value">${fmtDate(req.datetime)}</span>
+          </div>
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">Male User</span>
+            <span class="rpt-info-value">${esc((req.mUser && (req.mUser.username || req.mUser.phone)) || req.mUserId || '\u2014')}</span>
+          </div>
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">Female User</span>
+            <span class="rpt-info-value">${esc((req.fUser && (req.fUser.username || req.fUser.phone)) || req.fUserId || '\u2014')}</span>
+          </div>
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">Request Status</span>
+            <span class="rpt-info-value">${badge(req.status, reqStatusMap)}</span>
+          </div>
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">Address</span>
+            <span class="rpt-info-value" style="font-size:0.78rem">${esc(req.clubAddress || '\u2014')}</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <a class="btn-ghost" href="request.html?id=${esc(report.requestId)}" target="_blank" style="font-size:0.78rem">
+            Open full request \u2197
+          </a>
+        </div>
+      </div>
+    ` : `
+      <div class="rpt-block">
+        <div class="rpt-block-title">Request</div>
+        <div class="rpt-info-grid">
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">Request ID</span>
+            <span class="rpt-info-value" style="font-size:0.78rem;font-family:monospace">${esc(report.requestId)}</span>
+          </div>
+          <div class="rpt-info-item">
+            <span class="rpt-info-label">Type</span>
+            <span class="rpt-info-value">${esc(report.requestType || '\u2014')}</span>
+          </div>
+        </div>
+        <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <a class="btn-ghost" href="request.html?id=${esc(report.requestId)}" target="_blank" style="font-size:0.78rem">
+            Open full request \u2197
+          </a>
+        </div>
+      </div>
+    `;
+
+    // ── Reporters ─────────────────────────────────────────────────────────────
+    const reportersHtml = count === 0
+      ? '<p style="color:var(--muted);font-size:0.84rem">No reporters recorded.</p>'
+      : report.userReports.map((ur, idx) => `
+          <div class="reporter-card">
+            <div class="reporter-card-header">
+              <span class="reporter-name">#${idx + 1} &nbsp; ${esc(ur.userName || 'Unknown User')}</span>
+              <span class="reporter-date">${fmtDateTime(ur.reportedAt)}</span>
+            </div>
+            <p class="reporter-reason">${esc(ur.reason)}</p>
+          </div>
+        `).join('');
+
+    const reportersBlock = `
+      <div class="rpt-block">
+        <div class="rpt-block-title">Reported By (${count})</div>
+        <div class="reporter-list">${reportersHtml}</div>
+      </div>
+    `;
+
+    // ── Admin notes timeline ──────────────────────────────────────────────────
+    const notesHtml = !hasNotes
+      ? '<p style="color:var(--muted);font-size:0.84rem">No admin notes yet.</p>'
+      : report.adminNotes.map(n => `
+          <div class="admin-note-item">
+            <div class="admin-note-dot"></div>
+            <div class="admin-note-content">
+              <div class="admin-note-meta">${fmtDateTime(n.createdAt)}</div>
+              <div class="admin-note-text">${esc(n.note)}</div>
+            </div>
+          </div>
+        `).join('');
+
+    const notesBlock = `
+      <div class="rpt-block">
+        <div class="rpt-block-title">Admin Notes (${hasNotes ? report.adminNotes.length : 0})</div>
+        <div class="admin-notes-list">${notesHtml}</div>
+      </div>
+    `;
+
+    // ── Respond form ──────────────────────────────────────────────────────────
+    const respondBlock = `
+      <div class="rpt-block">
+        <div class="rpt-block-title">Admin Response</div>
+        <div class="rpt-respond-form">
+          <select id="rptRespondStatus">
+            <option value="pending"  ${report.status === 'pending'  ? 'selected' : ''}>Pending \u2014 Keep under review</option>
+            <option value="resolved" ${report.status === 'resolved' ? 'selected' : ''}>Resolved \u2014 Issue addressed</option>
+            <option value="closed"   ${report.status === 'closed'   ? 'selected' : ''}>Closed \u2014 No further action</option>
+          </select>
+          <textarea id="rptRespondNote" placeholder="Add a note describing the investigation outcome, action taken, or reason for status change\u2026"></textarea>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-sm btn-primary" id="rptRespondBtn" style="flex:1;min-width:140px">
+              <span id="rptRespondBtnText">Submit Response</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    // ── Meta footer ───────────────────────────────────────────────────────────
+    const metaBlock = `
+      <div style="padding:4px 2px;display:flex;gap:20px;flex-wrap:wrap">
+        <span style="font-size:0.72rem;color:var(--muted)">Report ID: <code style="color:var(--muted-mid)">${esc(report.id)}</code></span>
+        <span style="font-size:0.72rem;color:var(--muted)">First reported: ${fmtDateTime(report.createdAt)}</span>
+        <span style="font-size:0.72rem;color:var(--muted)">Last updated: ${fmtDateTime(report.updatedAt)}</span>
+        ${report.autoClosed ? '<span style="font-size:0.72rem;color:#888">\u26a0\ufe0f Auto-closed</span>' : ''}
+      </div>
+    `;
+
+    return reqBlock + reportersBlock + notesBlock + respondBlock + metaBlock;
+  }
+
+  window.openReportPanel = async function(reportId) {
+    const report = _reportsCache[reportId];
+    if (!report) { toast('Report not found — try refreshing the list'); return; }
+
+    // Show panel immediately with loading state
+    rptPanelOverlay.classList.remove('hidden');
+    document.getElementById('rptPanelTitleText').textContent = 'Report \u00b7 ' + shortId(report.id);
+    document.getElementById('rptPanelBadge').innerHTML = badge(report.status, rptStatusMap);
+    rptPanelBody.innerHTML = '<div class="rpt-loading">Fetching request details\u2026</div>';
+
+    // Fetch linked request details (and get fresh report data with admin notes)
+    let req = null;
+    try {
+      const reqJson = await apiAbs(API_BASE + '/v1/request/reports/request/' + report.requestId);
+      if (reqJson && reqJson.request) req = reqJson.request;
+      // Merge fresh report fields (adminNotes may have been updated)
+      if (reqJson && reqJson.report) {
+        _reportsCache[reportId] = { ...report, ...reqJson.report };
+      }
+    } catch (_) { /* silently degrade — we still show the report without request details */ }
+
+    const freshReport = _reportsCache[reportId] || report;
+    rptPanelBody.innerHTML = buildPanelBody(freshReport, req);
+
+    // Wire respond button
+    document.getElementById('rptRespondBtn').addEventListener('click', () => {
+      submitReportResponse(freshReport.id);
+    });
+  };
+
+  async function submitReportResponse(reportId) {
+    const noteEl   = document.getElementById('rptRespondNote');
+    const statusEl = document.getElementById('rptRespondStatus');
+    const btn      = document.getElementById('rptRespondBtn');
+    const btnText  = document.getElementById('rptRespondBtnText');
+
+    const note   = (noteEl.value || '').trim();
+    const status = statusEl.value;
+
+    if (!note || note.length < 3) {
+      toast('Please write a note (at least 3 characters) before submitting.');
+      noteEl.focus();
+      return;
+    }
+
+    btn.disabled = true;
+    btnText.textContent = 'Submitting\u2026';
+
+    const result = await apiAbs(API_BASE + '/v1/request-report/' + reportId + '/respond', {
+      method: 'POST',
+      body: JSON.stringify({ note, status }),
+    });
+
+    btn.disabled = false;
+    btnText.textContent = 'Submit Response';
+
+    if (!result || result.message) {
+      toast('Error: ' + (result && result.message ? result.message : 'Failed to submit'));
+      return;
+    }
+
+    toast('Response submitted successfully');
+    // Update cache with the freshly-returned report
+    if (result && result.id) {
+      _reportsCache[reportId] = result;
+    }
+    // Re-render panel and refresh table
+    openReportPanel(reportId);
+    loadReports(reportPage);
   }
 
   // ── Support ──────────────────────────────────────────────────────────────────

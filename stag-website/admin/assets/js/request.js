@@ -5,7 +5,7 @@
   'use strict';
 
   // ── Auth guard ──────────────────────────────────────────────────────────────
-  const token = sessionStorage.getItem(TOKEN_KEY);
+  const token = localStorage.getItem(TOKEN_KEY);
   if (!token) {
     window.location.href = 'index.html';
     return;
@@ -31,7 +31,7 @@
       },
     });
     if (res.status === 401) {
-      sessionStorage.clear();
+      localStorage.clear();
       window.location.href = 'index.html';
       return { ok: false, data: null };
     }
@@ -126,9 +126,225 @@
       </div>`;
   }
 
+  // ── Activity timeline ────────────────────────────────────────────────────────
+  const activityStatusColors = {
+    pending:           { dot: '#888',    label: 'Pending' },
+    accepted:          { dot: '#4caf50', label: 'Accepted' },
+    rejected:          { dot: '#ef5350', label: 'Rejected' },
+    confirm_intended:  { dot: '#ff9800', label: 'Confirm Intended' },
+    payment_initiated: { dot: '#ff9800', label: 'Payment Initiated' },
+    confirmed:         { dot: '#42a5f5', label: 'Payment Confirmed' },
+    verified:          { dot: '#26c6da', label: 'Meetup Verified' },
+    completed:         { dot: '#66bb6a', label: 'Completed' },
+    cancelled:         { dot: '#ef5350', label: 'Cancelled' },
+    expired:           { dot: '#9e9e9e', label: 'Expired' },
+  };
+
+  // resolve a UUID to a display name using the request participants
+  function resolveName(uuid, req) {
+    if (!uuid || !req) return null;
+    const mId = req.mUser && req.mUser.id;
+    const fId = req.fUser && req.fUser.id;
+    if (mId && uuid === mId) return (req.mUser.username || req.mUser.phone || 'Male User') + ' (Male)';
+    if (fId && uuid === fId) return (req.fUser.username || req.fUser.phone || 'Female User') + ' (Female)';
+    return null; // unknown UUID
+  }
+
+  function actorLabel(uuid, req) {
+    const name = resolveName(uuid, req);
+    return name
+      ? `<strong>${esc(name)}</strong>`
+      : `<span style="font-family:monospace;font-size:0.8rem;color:var(--muted)">${esc(uuid)}</span>`;
+  }
+
+  // build a human-readable description for each activity action
+  function describeActivity(item, req) {
+    const m = req && req.mUser ? (req.mUser.username || req.mUser.phone || 'Male User') : 'Male User';
+    const f = req && req.fUser ? (req.fUser.username || req.fUser.phone || 'Female User') : 'Female User';
+    const meta = item.metadata || {};
+
+    switch (item.action) {
+      case 'create':
+        return `<strong>${esc(m)}</strong> sent a meetup request to <strong>${esc(f)}</strong> at <em>${esc(req && req.clubName || 'the club')}</em>.`;
+
+      case 'respond': {
+        const s = item.status;
+        if (s === 'accepted')
+          return `<strong>${esc(f)}</strong> <span style="color:#4caf50;font-weight:600">accepted</span> the request.`;
+        if (s === 'rejected')
+          return `<strong>${esc(f)}</strong> <span style="color:#ef5350;font-weight:600">rejected</span> the request.`;
+        if (s === 'blocked')
+          return `Request was <span style="color:#ef5350;font-weight:600">blocked</span>.`;
+        return `<strong>${esc(f)}</strong> responded — new status: <em>${esc(s)}</em>.`;
+      }
+
+      case 'confirm_intended':
+        return `<strong>${esc(m)}</strong> confirmed intention to pay and locked the booking.`;
+
+      case 'payment_initiated': {
+        const orderId = meta.orderId || '';
+        return `<strong>${esc(m)}</strong> initiated payment.${orderId ? ` <span class="act-meta-pill">Order: ${esc(orderId)}</span>` : ''}`;
+      }
+
+      case 'payment_failed': {
+        const orderId = meta.orderId || '';
+        return `Payment <span style="color:#ef5350;font-weight:600">failed</span>.${orderId ? ` <span class="act-meta-pill">Order: ${esc(orderId)}</span>` : ''}`;
+      }
+
+      case 'confirmed': {
+        const paymentId = meta.paymentId || '';
+        const orderId   = meta.orderId   || '';
+        return `<strong>${esc(m)}</strong>'s payment was <span style="color:#42a5f5;font-weight:600">confirmed</span> — booking locked in.`
+          + (paymentId ? ` <span class="act-meta-pill">Payment ID: ${esc(paymentId)}</span>` : '')
+          + (orderId   ? ` <span class="act-meta-pill">Order: ${esc(orderId)}</span>` : '');
+      }
+
+      case 'verifyOtp': {
+        const isMUser = meta.isMUser === 'true';
+        const submittedOtp = meta.otp || '';
+        if (isMUser) {
+          // mUser entered fUser's meetup code → meetup verified
+          return `<strong>${esc(m)}</strong> entered <strong>${esc(f)}</strong>'s <em>Meetup Code</em>`
+            + (submittedOtp ? ` (<code style="font-size:1rem;letter-spacing:3px">${esc(submittedOtp)}</code>)` : '')
+            + ` — meetup verified ✓`;
+        } else {
+          // fUser entered mUser's satisfaction/entry code → completed
+          return `<strong>${esc(f)}</strong> entered <strong>${esc(m)}</strong>'s <em>Satisfaction Code</em>`
+            + (submittedOtp ? ` (<code style="font-size:1rem;letter-spacing:3px">${esc(submittedOtp)}</code>)` : '')
+            + ` — meeting completed ✓`;
+        }
+      }
+
+      case 'cancel': {
+        const byId   = meta.cancelledBy || item.actedBy || '';
+        const byType = meta.userType || '';
+        const name   = resolveName(byId, req);
+        const who    = name ? name : (byType === 'mUser' ? m : byType === 'fUser' ? f : byId || 'Unknown');
+        return `Request was <span style="color:#ef5350;font-weight:600">cancelled</span> by <strong>${esc(who)}</strong>.`;
+      }
+
+      case 'delete':
+        return `Request was <span style="color:#ef5350;font-weight:600">deleted</span>${meta.isAdmin === 'true' ? ' by an <strong>Admin</strong>' : ''}.`;
+
+      default:
+        return `Action: <em>${esc(item.action)}</em>`;
+    }
+  }
+
+  function buildActivitySection(actData, req) {
+    const section = document.createElement('div');
+    section.id = 'req-activity-section';
+
+    const items = (actData && Array.isArray(actData.activity) && actData.activity.length > 0)
+      ? actData.activity
+      : null;
+
+    if (!items) {
+      section.innerHTML = `
+        <p class="detail-section-title">Activity Timeline</p>
+        <div class="act-empty">No activity recorded for this request yet.</div>
+      `;
+      return section;
+    }
+
+    const timelineHtml = items.map((item, idx) => {
+      const col    = activityStatusColors[item.status] || { dot: '#aaa', label: item.status || '—' };
+      const isLast = idx === items.length - 1;
+      const desc   = describeActivity(item, req);
+
+      return `
+        <div class="act-item${isLast ? ' act-item-last' : ''}">
+          <div class="act-spine">
+            <div class="act-dot" style="background:${col.dot};box-shadow:0 0 0 3px ${col.dot}22"></div>
+            ${!isLast ? '<div class="act-line"></div>' : ''}
+          </div>
+          <div class="act-body">
+            <div class="act-header">
+              <span class="act-status-pill" style="background:${col.dot}22;color:${col.dot}">${esc(col.label)}</span>
+              <span class="act-time" style="margin:0">${fmtDate(item.actedAt)}</span>
+            </div>
+            <div class="act-desc">${desc}</div>
+          </div>
+        </div>`;
+    }).join('');
+
+    section.innerHTML = `
+      <p class="detail-section-title">Activity Timeline <span class="act-count">${items.length}</span></p>
+      <div class="act-timeline">${timelineHtml}</div>
+    `;
+    return section;
+  }
+
+  // ── Codes section ─────────────────────────────────────────────────────────────
+  function buildCodesSection(req) {
+    // Only meaningful when confirmed or beyond
+    const statusesWithCodes = ['confirmed', 'verified', 'completed'];
+    const hasCodes = statusesWithCodes.includes(req.status);
+    const mOtp = req.mUser && req.mUser.otp;
+    const fOtp = req.fUser && req.fUser.otp;
+    if (!hasCodes && !mOtp && !fOtp) return '';
+
+    const mName = req.mUser ? (req.mUser.username || req.mUser.phone || 'Male User') : 'Male User';
+    const fName = req.fUser ? (req.fUser.username || req.fUser.phone || 'Female User') : 'Female User';
+
+    function codeBox(label, sublabel, hint, code, available) {
+      const digits = available && code
+        ? code.split('').map(d => `<span class="code-digit">${esc(d)}</span>`).join('')
+        : `<span style="color:var(--muted);font-size:0.85rem">Not available (admin does not receive OTPs for security)</span>`;
+      return `
+        <div class="code-card">
+          <div class="code-card-header">
+            <span class="code-card-label">${esc(label)}</span>
+            <span class="code-card-sublabel">${esc(sublabel)}</span>
+          </div>
+          <div class="code-digits-row">${digits}</div>
+          <div class="code-card-hint">${hint}</div>
+        </div>`;
+    }
+
+    return `
+      <p class="detail-section-title">Meetup &amp; Entry Codes</p>
+      <div class="codes-row">
+        ${codeBox(
+          'Meetup Code',
+          `Held by ${fName} (Female)`,
+          `<strong>${mName}</strong> enters this code at the meeting point to verify the meetup happened. Advances status to <em>Verified</em>.`,
+          fOtp,
+          !!fOtp
+        )}
+        ${codeBox(
+          'Satisfaction / Entry Code',
+          `Held by ${mName} (Male)`,
+          `<strong>${fName}</strong> enters this code after the club entry to confirm completion. Advances status to <em>Completed</em> and releases payout.`,
+          mOtp,
+          !!mOtp
+        )}
+      </div>
+      <p class="codes-note">⚠️ OTP values are hidden from admins by the server for security. The codes submitted during verification are visible in the Activity Timeline below.</p>
+    `;
+  }
+
   // ── Render ────────────────────────────────────────────────────────────────────
   function render(req) {
     const pay = req.payment;
+    const mName = req.mUser ? (req.mUser.username || req.mUser.phone || 'Male User') : 'Male User';
+    const fName = req.fUser ? (req.fUser.username || req.fUser.phone || 'Female User') : 'Female User';
+
+    // cancellation info
+    let cancelInfo = '';
+    if (req.cancelledBy) {
+      const cancelName = req.cancelledBy === (req.mUser && req.mUser.id)
+        ? mName + ' (Male)'
+        : req.cancelledBy === (req.fUser && req.fUser.id)
+          ? fName + ' (Female)'
+          : req.cancelledBy;
+      cancelInfo = `
+        <div class="cancel-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+          Cancelled by <strong>${esc(cancelName)}</strong>
+          ${req.cancelledAt && req.cancelledAt !== '0001-01-01T00:00:00Z' ? ` on ${fmtDate(req.cancelledAt)}` : ''}
+        </div>`;
+    }
 
     content.innerHTML = `
       <!-- Hero: status + club -->
@@ -146,6 +362,8 @@
         </div>
       </div>
 
+      ${cancelInfo}
+
       <!-- Participants -->
       <p class="detail-section-title">Participants</p>
       <div class="req-users-row">
@@ -156,39 +374,39 @@
         ${userCard(req.fUser, 'Female User')}
       </div>
 
+      <!-- Codes -->
+      ${buildCodesSection(req)}
+
       <!-- Request info + Payment side by side -->
       <div class="req-info-row">
         <div class="req-info-col">
-          <p class="detail-section-title" style="margin-top:0">Request Info</p>
+          <p class="detail-section-title" style="margin-top:0">Request Details</p>
           <div class="detail-grid req-info-grid">
-            ${field('Request ID',   `<span style="font-family:monospace;font-size:0.8rem">${esc(req.id) || '—'}</span>`)}
             ${field('Status',       badge(req.status, reqStatusMap))}
             ${field('Scheduled At', fmtDate(req.datetime))}
             ${field('Timezone',     esc(req.timezone) || '—')}
             ${field('Club',         esc(req.clubName) || '—')}
             ${field('Address',      esc(req.clubAddress) || '—')}
-            ${field('Place ID',     esc(req.placeId) || '—')}
             ${field('Created At',   fmtDate(req.createdAt))}
             ${field('Updated At',   fmtDate(req.updatedAt))}
-            ${req.cancelledBy ? field('Cancelled By', esc(req.cancelledBy)) : ''}
-            ${req.cancelledAt && req.cancelledAt !== '0001-01-01T00:00:00Z' ? field('Cancelled At', fmtDate(req.cancelledAt)) : ''}
-            ${req.chatId ? field('Chat ID', `<span style="font-family:monospace;font-size:0.8rem">${esc(req.chatId)}</span>`) : ''}
+            ${req.chatId ? field('Chat', `<a href="#" style="color:var(--red);font-size:0.8rem;font-family:monospace">${esc(req.chatId)}</a>`) : ''}
+            ${field('Request ID', `<span style="font-family:monospace;font-size:0.76rem;color:var(--muted)">${esc(req.id)}</span>`)}
           </div>
         </div>
         ${pay ? `
         <div class="req-info-col">
-          <p class="detail-section-title" style="margin-top:0">Payment</p>
+          <p class="detail-section-title" style="margin-top:0">Payment Breakdown</p>
           <div class="detail-grid req-info-grid">
-            ${field('Base Amount',        fmtCurrency(pay.fUserBaseAmount))}
-            ${field('mUser Platform Fee', fmtCurrency(pay.mUserPlatformFee))}
-            ${field('mUser GST',          fmtCurrency(pay.mUserGST))}
-            ${field('mUser Total Paid',   fmtCurrency(pay.mUserTotalPayable))}
-            ${field('fUser Platform Fee', fmtCurrency(pay.fUserPlatformFee))}
-            ${field('fUser GST',          fmtCurrency(pay.fUserGST))}
-            ${field('fUser Net Payout',   fmtCurrency(pay.fUserNetPayout))}
-            ${pay.paymentStatus ? field('Payment Status', esc(pay.paymentStatus)) : ''}
-            ${pay.payoutStatus  ? field('Payout Status',  esc(pay.payoutStatus))  : ''}
-            ${pay.refundStatus  ? field('Refund Status',  esc(pay.refundStatus))  : ''}
+            ${field('Entry Fee (Base)',        fmtCurrency(pay.fUserBaseAmount))}
+            ${field(`${mName} — Platform Fee`, fmtCurrency(pay.mUserPlatformFee))}
+            ${field(`${mName} — GST`,          fmtCurrency(pay.mUserGST))}
+            ${field(`${mName} — Total Paid`,   `<strong>${fmtCurrency(pay.mUserTotalPayable)}</strong>`)}
+            ${field(`${fName} — Platform Fee`, fmtCurrency(pay.fUserPlatformFee))}
+            ${field(`${fName} — GST`,          fmtCurrency(pay.fUserGST))}
+            ${field(`${fName} — Net Payout`,   `<strong>${fmtCurrency(pay.fUserNetPayout)}</strong>`)}
+            ${pay.paymentStatus ? field('Payment Status', `<span style="text-transform:capitalize">${esc(pay.paymentStatus)}</span>`) : ''}
+            ${pay.payoutStatus  ? field('Payout Status',  `<span style="text-transform:capitalize">${esc(pay.payoutStatus)}</span>`)  : ''}
+            ${pay.refundStatus  ? field('Refund Status',  `<span style="text-transform:capitalize">${esc(pay.refundStatus)}</span>`)  : ''}
             ${pay.refundAmount  ? field('Refund Amount',  fmtCurrency(pay.refundAmount)) : ''}
           </div>
         </div>
@@ -206,7 +424,33 @@
     }
     console.log('[STAG Admin] Request detail page loaded for id:', requestId);
     render(data);
-    initLightbox();
+
+    // Wire photo lightbox
+    const lightbox    = document.getElementById('photoLightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const lightboxClose = document.getElementById('lightboxClose');
+    if (lightbox && lightboxImg && lightboxClose) {
+      document.querySelectorAll('.ucell-avatar img').forEach(img => {
+        img.style.cursor = 'zoom-in';
+        img.addEventListener('click', () => {
+          lightboxImg.src = img.src;
+          lightbox.classList.add('open');
+        });
+      });
+      lightboxClose.addEventListener('click', () => lightbox.classList.remove('open'));
+      lightbox.addEventListener('click', e => { if (e.target === lightbox) lightbox.classList.remove('open'); });
+    }
+
+    // Fetch activity timeline (best-effort — degrade silently)
+    let actData = null;
+    try {
+      const { ok: aOk, data: aData } = await apiAbs(
+        API_BASE + '/v1/request/' + encodeURIComponent(requestId) + '/activity'
+      );
+      if (aOk && aData) actData = aData;
+    } catch (_) { /* silently degrade */ }
+
+    content.appendChild(buildActivitySection(actData, data));
   }
 
   load();

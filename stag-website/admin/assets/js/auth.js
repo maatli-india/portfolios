@@ -5,7 +5,7 @@
   'use strict';
 
   // Redirect to dashboard if already logged in
-  if (sessionStorage.getItem(TOKEN_KEY)) {
+  if (localStorage.getItem(TOKEN_KEY)) {
     window.location.href = 'dashboard.html';
     return;
   }
@@ -68,11 +68,11 @@
         return;
       }
 
-      sessionStorage.setItem(TOKEN_KEY, token);
+      localStorage.setItem(TOKEN_KEY, token);
 
       // The sign-in endpoint returns only the token, so derive minimal display info.
       const adminInfo = { username, role: 'admin' };
-      sessionStorage.setItem(ADMIN_INFO_KEY, JSON.stringify(adminInfo));
+      localStorage.setItem(ADMIN_INFO_KEY, JSON.stringify(adminInfo));
 
       window.location.href = 'dashboard.html';
 

@@ -235,15 +235,47 @@
     <!-- ══ REPORTS ══ -->
     <section class="section hidden" id="section-reports">
       <div class="section-intro">
-        <h3 class="section-title">User Reports</h3>
-        <p class="section-desc">Review all user-reported violations.</p>
+        <h3 class="section-title">Reported Issues</h3>
+        <p class="section-desc">Track, investigate, and resolve user-reported issues on completed requests.</p>
       </div>
+
+      <!-- Quick-filter chips -->
+      <div class="report-chips-row">
+        <button class="rpt-chip rpt-chip-all active" data-status="">All</button>
+        <button class="rpt-chip rpt-chip-pending" data-status="pending">⏳ Pending</button>
+        <button class="rpt-chip rpt-chip-resolved" data-status="resolved">✓ Resolved</button>
+        <button class="rpt-chip rpt-chip-closed" data-status="closed">✗ Closed</button>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="table-toolbar" style="margin-top:14px">
+        <select class="filter-select" id="rptTypeFilter">
+          <option value="">All Types</option>
+          <option value="club">Club</option>
+          <option value="event">Event</option>
+        </select>
+        <button class="btn-sm btn-primary" id="rptFilterBtn">Filter</button>
+      </div>
+
       <div class="table-wrap">
         <table class="data-table" id="reportsTable">
-          <thead><tr><th>Reported User</th><th>Reason</th><th>Reported By</th><th>Count</th><th>Date</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Reported By</th>
+              <th>Issue</th>
+              <th>Type</th>
+              <th>Reports</th>
+              <th>Status</th>
+              <th>Reported On</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
           <tbody id="reportsBody"></tbody>
         </table>
-        <div class="table-empty hidden" id="reportsEmpty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg><p>No reports found</p></div>
+        <div class="table-empty hidden" id="reportsEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          <p>No reports found</p>
+        </div>
       </div>
       <div class="pagination" id="reportsPagination"></div>
     </section>
@@ -367,10 +399,28 @@
     </div>
   </div>
 
+  <!-- ══ REPORT DETAIL PANEL ══ -->
+  <div class="rpt-panel-overlay hidden" id="rptPanelOverlay">
+    <div class="rpt-panel" id="rptPanel">
+      <div class="rpt-panel-header">
+        <div class="rpt-panel-header-left">
+          <button class="rpt-panel-close" id="rptPanelClose" aria-label="Close panel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <span class="rpt-panel-title" id="rptPanelTitleText">Report Detail</span>
+        </div>
+        <span id="rptPanelBadge"></span>
+      </div>
+      <div class="rpt-panel-body" id="rptPanelBody">
+        <div class="rpt-loading">Loading…</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast -->
   <div class="toast" id="toast" role="alert" aria-live="polite"></div>
 
-  <script src="assets/js/config.js"></script>
-  <script src="assets/js/dashboard.js"></script>
+  <script src="assets/js/config.js?v=6"></script>
+  <script src="assets/js/dashboard.js?v=6"></script>
 </body>
 </html>

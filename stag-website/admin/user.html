@@ -29,6 +29,9 @@
       <button class="user-tab active" data-tab="details">Details</button>
       <button class="user-tab" data-tab="requests">Club Requests</button>
       <button class="user-tab" data-tab="booked">Booked Clubs</button>
+      <button class="user-tab" data-tab="bank" id="bankTab" style="display:none">Bank Account</button>
+      <button class="user-tab" data-tab="availability" id="availabilityTab" style="display:none">Availability</button>
+      <button class="user-tab" data-tab="location" id="locationTab" style="display:none">Location</button>
     </div>
 
     <!-- ── Tab: Details ────────────────────────────────────────────────────── -->
@@ -85,6 +88,27 @@
         </div>
       </div>
       <div class="pagination" id="bookedPagination"></div>
+    </div>
+
+    <!-- ── Tab: Bank Account ──────────────────────────────────────────────── -->
+    <div class="user-tab-panel" id="tab-bank" style="display:none">
+      <div id="bankAccountBody">
+        <div class="detail-loading">Loading bank account…</div>
+      </div>
+    </div>
+
+    <!-- ── Tab: Availability ──────────────────────────────────────────────── -->
+    <div class="user-tab-panel" id="tab-availability" style="display:none">
+      <div id="availabilityBody">
+        <div class="detail-loading">Loading availability…</div>
+      </div>
+    </div>
+
+    <!-- ── Tab: Location ─────────────────────────────────────────────────── -->
+    <div class="user-tab-panel" id="tab-location" style="display:none">
+      <div id="locationBody">
+        <div class="detail-loading">Loading location…</div>
+      </div>
     </div>
   </div>
 
