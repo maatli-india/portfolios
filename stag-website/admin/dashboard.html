@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STAG Admin — Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body class="dash-body">
+
+  <!-- ═══════════════════════════ MOBILE OVERLAY ═════════════════════════ -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ═══════════════════════════ SIDEBAR ═══════════════════════════════ -->
+  <aside class="sidebar" id="sidebar">
+
+    <!-- Logo -->
+    <div class="sidebar-logo">
+      <div class="logo-icon"><img src="../assets/images/stag-logo.png" alt="STAG" /></div>
+      <div class="logo-text">
+        <span class="logo-name">STAG</span>
+        <span class="logo-sub">Admin Panel</span>
+      </div>
+    </div>
+
+    <!-- Admin profile -->
+    <div class="sidebar-profile">
+      <div class="profile-avatar" id="profileAvatar">A</div>
+      <div class="profile-info">
+        <p class="profile-name" id="profileName">Admin</p>
+        <p class="profile-role" id="profileRole">superadmin</p>
+      </div>
+      <span class="online-dot"></span>
+    </div>
+
+    <!-- Nav -->
+    <nav class="sidebar-nav">
+      <p class="nav-group-label">Main</p>
+
+      <a href="#" class="nav-item active" data-section="overview">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        </span>
+        <span class="nav-label">Overview</span>
+      </a>
+
+      <p class="nav-group-label">Manage</p>
+
+      <a href="#" class="nav-item" data-section="users">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </span>
+        <span class="nav-label">Users</span>
+      </a>
+
+      <a href="#" class="nav-item" data-section="requests">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </span>
+        <span class="nav-label">Club Requests</span>
+      </a>
+
+      <p class="nav-group-label">Moderation</p>
+
+      <a href="#" class="nav-item" data-section="reports">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        </span>
+        <span class="nav-label">Reports</span>
+      </a>
+
+      <a href="#" class="nav-item" data-section="support">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+        <span class="nav-label">Support</span>
+      </a>
+
+      <p class="nav-group-label">Settings</p>
+
+      <a href="#" class="nav-item" data-section="misc">
+        <span class="nav-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07M8.46 8.46a5 5 0 0 0 0 7.07"/></svg>
+        </span>
+        <span class="nav-label">Miscellaneous</span>
+      </a>
+    </nav>
+
+    <button class="btn-logout" id="logoutBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Sign Out
+    </button>
+  </aside>
+
+  <!-- ═══════════════════════════ MAIN CONTENT ══════════════════════════ -->
+  <main class="dash-main">
+
+    <!-- Header -->
+    <header class="dash-header">
+      <div class="dash-header-left">
+        <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+        </button>
+        <div class="page-breadcrumb">
+          <span class="breadcrumb-root">Dashboard</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          <span class="breadcrumb-current" id="pageTitle">Overview</span>
+        </div>
+      </div>
+      <div class="dash-header-right">
+        <div class="header-admin">
+          <div class="header-avatar" id="headerAvatar">A</div>
+          <div class="header-admin-info">
+            <span class="header-admin-name" id="headerAdminName">Admin</span>
+            <span class="admin-badge" id="adminBadge">superadmin</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ══ OVERVIEW ══ -->
+    <section class="section" id="section-overview">
+      <div class="section-intro">
+        <h3 class="section-title">Platform Overview</h3>
+        <p class="section-desc">Live snapshot of your platform metrics.</p>
+      </div>
+      <div class="stats-grid" id="statsGrid">
+        <div class="stat-card" id="stat-totalUsers">
+          <div class="stat-icon users-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg></div>
+          <div class="stat-body"><p class="stat-label">Total Users</p><p class="stat-value" id="v-totalUsers"><span class="skel"></span></p></div>
+        </div>
+        <div class="stat-card" id="stat-activeUsers">
+          <div class="stat-icon active-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="stat-body"><p class="stat-label">Active Users</p><p class="stat-value" id="v-activeUsers"><span class="skel"></span></p></div>
+        </div>
+        <div class="stat-card" id="stat-blockedUsers">
+          <div class="stat-icon blocked-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg></div>
+          <div class="stat-body"><p class="stat-label">Blocked Users</p><p class="stat-value" id="v-blockedUsers"><span class="skel"></span></p></div>
+        </div>
+        <div class="stat-card" id="stat-totalRequests">
+          <div class="stat-icon requests-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div>
+          <div class="stat-body"><p class="stat-label">Total Requests</p><p class="stat-value" id="v-totalRequests"><span class="skel"></span></p></div>
+        </div>
+        <div class="stat-card" id="stat-pendingRequests">
+          <div class="stat-icon pending-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+          <div class="stat-body"><p class="stat-label">Pending</p><p class="stat-value" id="v-pendingRequests"><span class="skel"></span></p></div>
+        </div>
+        <div class="stat-card" id="stat-completedRequests">
+          <div class="stat-icon completed-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="20 6 9 17 4 12"/></svg></div>
+          <div class="stat-body"><p class="stat-label">Completed</p><p class="stat-value" id="v-completedRequests"><span class="skel"></span></p></div>
+        </div>
+        <div class="stat-card" id="stat-totalReports">
+          <div class="stat-icon reports-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg></div>
+          <div class="stat-body"><p class="stat-label">User Reports</p><p class="stat-value" id="v-totalReports"><span class="skel"></span></p></div>
+        </div>
+        <div class="stat-card" id="stat-openTickets">
+          <div class="stat-icon tickets-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+          <div class="stat-body"><p class="stat-label">Open Tickets</p><p class="stat-value" id="v-openTickets"><span class="skel"></span></p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══ USERS ══ -->
+    <section class="section hidden" id="section-users">
+      <div class="section-intro">
+        <h3 class="section-title">Users</h3>
+        <p class="section-desc">Browse, search, and manage all registered users.</p>
+      </div>
+      <div class="table-toolbar">
+        <div class="search-wrap">
+          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" id="userSearch" type="text" placeholder="Name, email, phone…" />
+        </div>
+        <select class="filter-select" id="userStatusFilter">
+          <option value="">All Status</option>
+          <option value="active">Active</option>
+          <option value="blocked">Blocked</option>
+          <option value="inactive">Inactive</option>
+          <option value="banned">Banned</option>
+          <option value="deleted">Deleted</option>
+        </select>
+        <select class="filter-select" id="userGenderFilter">
+          <option value="">All Gender</option>
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+        <button class="btn-sm btn-primary" id="userSearchBtn">Search</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="usersTable">
+          <thead><tr><th>User</th><th>Phone</th><th>Gender</th><th>Status</th><th>Joined</th><th>Actions</th></tr></thead>
+          <tbody id="usersBody"></tbody>
+        </table>
+        <div class="table-empty hidden" id="usersEmpty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg><p>No users found</p></div>
+      </div>
+      <div class="pagination" id="usersPagination"></div>
+    </section>
+
+    <!-- ══ CLUB REQUESTS ══ -->
+    <section class="section hidden" id="section-requests">
+      <div class="section-intro">
+        <h3 class="section-title">Club Requests</h3>
+        <p class="section-desc">Track and monitor all club meetup requests.</p>
+      </div>
+      <div class="table-toolbar">
+        <select class="filter-select" id="reqTimelineFilter">
+          <option value="upcoming">Upcoming</option>
+          <option value="past">Past</option>
+        </select>
+        <select class="filter-select" id="reqStatusFilter">
+          <option value="">All Status</option>
+          <option value="pending">Pending</option>
+          <option value="accepted">Accepted</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="completed">Completed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="rejected">Rejected</option>
+          <option value="expired">Expired</option>
+        </select>
+        <button class="btn-sm btn-primary" id="reqSearchBtn">Filter</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="requestsTable">
+          <thead><tr><th>ID</th><th>Club</th><th>Male User</th><th>Female User</th><th>Status</th><th>Scheduled</th><th>Amount</th></tr></thead>
+          <tbody id="requestsBody"></tbody>
+        </table>
+        <div class="table-empty hidden" id="requestsEmpty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg><p>No requests found</p></div>
+      </div>
+      <div class="pagination" id="requestsPagination"></div>
+    </section>
+
+    <!-- ══ REPORTS ══ -->
+    <section class="section hidden" id="section-reports">
+      <div class="section-intro">
+        <h3 class="section-title">Reported Issues</h3>
+        <p class="section-desc">Track, investigate, and resolve user-reported issues on completed requests.</p>
+      </div>
+
+      <!-- Quick-filter chips -->
+      <div class="report-chips-row">
+        <button class="rpt-chip rpt-chip-all active" data-status="">All</button>
+        <button class="rpt-chip rpt-chip-pending" data-status="pending">⏳ Pending</button>
+        <button class="rpt-chip rpt-chip-resolved" data-status="resolved">✓ Resolved</button>
+        <button class="rpt-chip rpt-chip-closed" data-status="closed">✗ Closed</button>
+      </div>
+
+      <!-- Toolbar -->
+      <div class="table-toolbar" style="margin-top:14px">
+        <select class="filter-select" id="rptTypeFilter">
+          <option value="">All Types</option>
+          <option value="club">Club</option>
+          <option value="event">Event</option>
+        </select>
+        <button class="btn-sm btn-primary" id="rptFilterBtn">Filter</button>
+      </div>
+
+      <div class="table-wrap">
+        <table class="data-table" id="reportsTable">
+          <thead>
+            <tr>
+              <th>Reported By</th>
+              <th>Issue</th>
+              <th>Type</th>
+              <th>Reports</th>
+              <th>Status</th>
+              <th>Reported On</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="reportsBody"></tbody>
+        </table>
+        <div class="table-empty hidden" id="reportsEmpty">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/></svg>
+          <p>No reports found</p>
+        </div>
+      </div>
+      <div class="pagination" id="reportsPagination"></div>
+    </section>
+
+    <!-- ══ SUPPORT ══ -->
+    <section class="section hidden" id="section-support">
+      <div class="section-intro">
+        <h3 class="section-title">Support Tickets</h3>
+        <p class="section-desc">Manage user support requests.</p>
+      </div>
+      <div class="table-toolbar">
+        <select class="filter-select" id="supportStatusFilter">
+          <option value="">All Status</option>
+          <option value="open">Open</option>
+          <option value="closed">Closed</option>
+        </select>
+        <button class="btn-sm btn-primary" id="supportSearchBtn">Filter</button>
+      </div>
+      <div class="table-wrap">
+        <table class="data-table" id="supportTable">
+          <thead><tr><th>Title</th><th>User ID</th><th>Status</th><th>Created</th></tr></thead>
+          <tbody id="supportBody"></tbody>
+        </table>
+        <div class="table-empty hidden" id="supportEmpty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg><p>No tickets found</p></div>
+      </div>
+      <div class="pagination" id="supportPagination"></div>
+    </section>
+
+    <!-- ══ MISCELLANEOUS ══ -->
+    <section class="section hidden" id="section-misc">
+      <div class="section-intro">
+        <h3 class="section-title">Miscellaneous</h3>
+        <p class="section-desc">Manage app content — guidelines, about app, FAQs, support, legal texts, and policies.</p>
+      </div>
+
+      <!-- Guidelines -->
+      <div class="misc-group">
+        <h4 class="misc-group-title">Guidelines <span class="misc-hint">(one point per line)</span></h4>
+        <p class="misc-col-label">Male</p>
+        <textarea id="misc-maleGuidelines" class="misc-textarea" rows="7" placeholder="Be respectful and courteous at all times.&#10;Arrive on time as agreed.&#10;..."></textarea>
+        <p class="misc-col-label" style="margin-top:14px">Female</p>
+        <textarea id="misc-femGuidelines" class="misc-textarea" rows="7" placeholder="Review the male user's profile carefully before accepting.&#10;Meet only at the confirmed club location.&#10;..."></textarea>
+      </div>
+
+      <!-- About App -->
+      <div class="misc-group">
+        <h4 class="misc-group-title">About App</h4>
+        <p class="misc-col-label">Male</p>
+        <textarea id="misc-maleAbout" class="misc-textarea" rows="6" placeholder="Stag is a premium social experience app for male users..."></textarea>
+        <p class="misc-col-label" style="margin-top:14px">Female</p>
+        <textarea id="misc-femAbout" class="misc-textarea" rows="6" placeholder="Stag is a premium social experience app for female users..."></textarea>
+      </div>
+
+      <!-- FAQs -->
+      <div class="misc-group">
+        <h4 class="misc-group-title">FAQs <span class="misc-hint">(one entry per line)</span></h4>
+        <p class="misc-col-label">Male</p>
+        <textarea id="misc-maleFaq" class="misc-textarea" rows="7" placeholder="How does payment work? You pay after the request is confirmed.&#10;..."></textarea>
+        <p class="misc-col-label" style="margin-top:14px">Female</p>
+        <textarea id="misc-femFaq" class="misc-textarea" rows="7" placeholder="How do I accept a request? Go to your requests tab and tap Accept.&#10;..."></textarea>
+      </div>
+
+      <!-- Support Credentials -->
+      <div class="misc-group">
+        <h4 class="misc-group-title">Support Credentials</h4>
+        <textarea id="misc-support" class="misc-textarea" rows="4" placeholder="support@stag.org.in&#10;Phone: +91-XXXXXXXXXX&#10;Hours: 10am – 7pm IST"></textarea>
+      </div>
+
+      <!-- Legal -->
+      <div class="misc-group">
+        <h4 class="misc-group-title">Legal</h4>
+        <p class="misc-col-label">Terms &amp; Conditions</p>
+        <textarea id="misc-tnc" class="misc-textarea" rows="10" placeholder="By using this app you agree to..."></textarea>
+        <p class="misc-col-label" style="margin-top:14px">Privacy Policy</p>
+        <textarea id="misc-privacy" class="misc-textarea" rows="10" placeholder="We collect the following data..."></textarea>
+      </div>
+
+      <!-- Payment Policy -->
+      <div class="misc-group">
+        <h4 class="misc-group-title">Payment Policy</h4>
+        <p class="misc-col-label">Male</p>
+        <textarea id="misc-malePay" class="misc-textarea" rows="7" placeholder="Payment terms for male users..."></textarea>
+        <p class="misc-col-label" style="margin-top:14px">Female</p>
+        <textarea id="misc-femPay" class="misc-textarea" rows="7" placeholder="Payment terms for female users..."></textarea>
+      </div>
+
+      <!-- Cancellation Policy -->
+      <div class="misc-group">
+        <h4 class="misc-group-title">Cancellation Policy</h4>
+        <p class="misc-col-label">Male</p>
+        <textarea id="misc-maleCancel" class="misc-textarea" rows="7" placeholder="Cancellation terms for male users..."></textarea>
+        <p class="misc-col-label" style="margin-top:14px">Female</p>
+        <textarea id="misc-femCancel" class="misc-textarea" rows="7" placeholder="Cancellation terms for female users..."></textarea>
+      </div>
+
+      <!-- Refund Policy -->
+      <div class="misc-group">
+        <h4 class="misc-group-title">Refund Policy</h4>
+        <p class="misc-col-label">Male</p>
+        <textarea id="misc-maleRefund" class="misc-textarea" rows="7" placeholder="Refund terms for male users..."></textarea>
+        <p class="misc-col-label" style="margin-top:14px">Female</p>
+        <textarea id="misc-femRefund" class="misc-textarea" rows="7" placeholder="Refund terms for female users..."></textarea>
+      </div>
+
+      <div class="misc-footer">
+        <button class="btn-sm btn-primary" id="miscSaveBtn">Save All</button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ═══════════════════════════ USER DETAIL MODAL ════════════════════ -->
+  <div class="modal-overlay hidden" id="userModal">
+    <div class="modal-card">
+      <button class="modal-close" id="modalClose">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+      <h3 class="modal-title">User Details</h3>
+      <div class="modal-body" id="modalBody"></div>
+      <div class="modal-actions" id="modalActions"></div>
+    </div>
+  </div>
+
+  <!-- ══ REPORT DETAIL PANEL ══ -->
+  <div class="rpt-panel-overlay hidden" id="rptPanelOverlay">
+    <div class="rpt-panel" id="rptPanel">
+      <div class="rpt-panel-header">
+        <div class="rpt-panel-header-left">
+          <button class="rpt-panel-close" id="rptPanelClose" aria-label="Close panel">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+          </button>
+          <span class="rpt-panel-title" id="rptPanelTitleText">Report Detail</span>
+        </div>
+        <span id="rptPanelBadge"></span>
+      </div>
+      <div class="rpt-panel-body" id="rptPanelBody">
+        <div class="rpt-loading">Loading…</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast" role="alert" aria-live="polite"></div>
+
+  <script src="assets/js/config.js?v=6"></script>
+  <script src="assets/js/dashboard.js?v=6"></script>
+</body>
+</html>

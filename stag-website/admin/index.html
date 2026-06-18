@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>STAG Admin — Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/admin.css" />
+</head>
+<body class="login-body">
+
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">
+        <img src="../assets/images/stag-logo.png" alt="STAG" />
+      </div>
+      <h1 class="login-title">Admin Portal</h1>
+      <p class="login-sub">Sign in to manage STAG</p>
+
+      <form id="loginForm" novalidate autocomplete="on">
+        <div class="field-group">
+          <label for="username">Email</label>
+          <input id="username" type="text" placeholder="admin@stag.org.in"
+                 autocomplete="username" required />
+        </div>
+        <div class="field-group">
+          <label for="password">Password</label>
+          <input id="password" type="password" placeholder="Enter password"
+                 autocomplete="current-password" required />
+        </div>
+
+        <div class="login-error" id="loginError" hidden></div>
+
+        <button type="submit" class="btn-primary" id="loginBtn">
+          <span id="btnLabel">Sign In</span>
+          <span id="btnSpinner" class="spinner" hidden></span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/auth.js"></script>
+</body>
+</html>
