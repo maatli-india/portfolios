@@ -772,8 +772,10 @@
     ['misc-femPay',         'femalePaymentPolicy'],
     ['misc-maleCancel',     'maleCancellationPolicy'],
     ['misc-femCancel',      'femaleCancellationPolicy'],
-    ['misc-maleRefund',     'maleRefundPolicy'],
-    ['misc-femRefund',      'femaleRefundPolicy'],
+    ['misc-maleRefund',               'maleRefundPolicy'],
+    ['misc-femRefund',                 'femaleRefundPolicy'],
+    ['misc-maleDisclaimerAndSafety',   'maleDisclaimerAndSafety'],
+    ['misc-femDisclaimerAndSafety',    'femaleDisclaimerAndSafety'],
   ];
 
   async function loadMisc() {
